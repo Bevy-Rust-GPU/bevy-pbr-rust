@@ -16,7 +16,8 @@ use crate::prelude::{Mesh, Skinning, VertexNormal, VertexPosition, VertexTangent
         skinned: some | none
     },
     permutations = [
-        file("../../entry_points.json", "mesh::entry_points")
+        file("../../entry_points.json", "mesh::entry_points"),
+        env("BEVY_PBR_RUST_MESH_VERTEX_PERMUTATIONS", "mesh::entry_points")
     ]
 )]
 pub fn vertex(

@@ -31,9 +31,8 @@ use super::BaseMaterial;
         cluster_debug: debug_z_slices | debug_cluster_light_complexity | debug_cluster_coherency | none
     },
     permutations = [
-        //(array, uniform, some, some, some, none, none, none, none, some, some, none),
-        //(*, uniform, some, some, some, none, none, none, none, *, *, none)
-        file("../../entry_points.json", "pbr::entry_points")
+        file("../../entry_points.json", "pbr::entry_points"),
+        env("BEVY_PBR_RUST_PBR_FRAGMENT_PERMUTATIONS", "pbr::entry_points")
     ]
 )]
 #[spirv(fragment)]
