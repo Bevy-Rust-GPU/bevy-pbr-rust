@@ -7,7 +7,7 @@ use spirv_std::{
 #[allow(unused_imports)]
 use spirv_std::num_traits::Float;
 
-use rust_gpu_util::prelude::NaturalLog;
+use rust_gpu_bridge::prelude::NaturalLog;
 
 use crate::prelude::{DirectionalLight, DirectionalShadowTextures, View};
 

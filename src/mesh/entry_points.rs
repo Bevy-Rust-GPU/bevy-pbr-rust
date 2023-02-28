@@ -35,8 +35,8 @@ pub fn vertex(
 
     #[permutate(color = some)] in_color: Vec4,
 
-    #[permutate(skinned = some)] in_joint_indices: rust_gpu_util::glam::UVec4,
-    #[permutate(skinned = some)] in_joint_weights: rust_gpu_util::glam::Vec4,
+    #[permutate(skinned = some)] in_joint_indices: rust_gpu_bridge::glam::UVec4,
+    #[permutate(skinned = some)] in_joint_weights: rust_gpu_bridge::glam::Vec4,
 
     #[spirv(position)] out_clip_position: &mut Vec4,
     out_world_position: &mut Vec4,
