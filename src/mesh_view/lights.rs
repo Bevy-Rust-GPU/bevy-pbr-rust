@@ -1,3 +1,5 @@
+use core::ops::{Add, Mul, Sub};
+
 use spirv_std::{
     arch::unsigned_min,
     glam::{UVec4, Vec2, Vec3, Vec4},
@@ -95,7 +97,7 @@ impl Lights {
         };
         // NOTE: We use min as we may limit the far z plane used for clustering to be closeer than
         // the furthest thing being drawn. This means that we need to limit to the maximum cluster.
-        unsigned_min(z_slice, self.cluster_dimensions.z - 1)
+        unsigned_min(z_slice, self.cluster_dimensions.z.sub(1))
     }
 
     pub fn fragment_cluster_index(
@@ -113,8 +115,10 @@ impl Lights {
         // NOTE: Restricting cluster index to avoid undefined behavior when accessing uniform buffer
         // arrays based on the cluster index.
         unsigned_min(
-            (xy.y * self.cluster_dimensions.x + xy.x) * self.cluster_dimensions.z + z_slice,
-            self.cluster_dimensions.w - 1,
+            (xy.y.mul(self.cluster_dimensions.x).add(xy.x))
+                .mul(self.cluster_dimensions.z)
+                .add(z_slice),
+            self.cluster_dimensions.w.sub(1),
         )
     }
 }

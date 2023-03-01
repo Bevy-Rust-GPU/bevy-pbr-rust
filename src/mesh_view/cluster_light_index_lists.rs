@@ -1,3 +1,5 @@
+use core::ops::Mul;
+
 use spirv_std::glam::UVec4;
 
 pub trait ClusterLightIndexLists {
@@ -24,7 +26,7 @@ impl ClusterLightIndexLists for ClusterLightIndexListsUniform {
             _ => panic!(),
         };
         // And index % 4 gives the sub-index of the u8 within the u32 so we shift by 8 * sub-index
-        (indices >> (8 * (index & ((1 << 2) - 1)))) & ((1 << 8) - 1)
+        (indices >> (8.mul(index & ((1 << 2) - 1)))) & ((1 << 8) - 1)
     }
 }
 

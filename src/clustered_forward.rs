@@ -1,3 +1,5 @@
+use core::ops::Add;
+
 use crate::glam::{UVec3, Vec4};
 use rust_gpu_bridge::{hsv2rgb, random_1d, smooth_step::SmoothStep};
 
@@ -50,10 +52,10 @@ impl ClusterDebugVisualization for DebugZSlices {
         let mut z_slice: u32 = lights.view_z_to_z_slice(view_z, is_orthographic);
         // A hack to make the colors alternate a bit more
         if (z_slice & 1) == 1 {
-            z_slice = z_slice + lights.cluster_dimensions.z / 2;
+            z_slice = z_slice.add(lights.cluster_dimensions.z / 2);
         }
         let slice_color = hsv2rgb(
-            z_slice as f32 / (lights.cluster_dimensions.z + 1) as f32,
+            z_slice as f32 / (lights.cluster_dimensions.z.add(1)) as f32,
             1.0,
             0.5,
         );
@@ -82,13 +84,13 @@ impl ClusterDebugVisualization for DebugClusterLightComplexity {
 
         output_color.x = (1.0 - cluster_overlay_alpha) * output_color.x
             + cluster_overlay_alpha
-                * ((offset_and_counts.y + offset_and_counts.z) as f32)
+                * ((offset_and_counts.y.add(offset_and_counts.z)) as f32)
                     .smooth_step(0.0, max_light_complexity_per_cluster);
 
         output_color.y = (1.0 - cluster_overlay_alpha) * output_color.y
             + cluster_overlay_alpha
                 * (1.0
-                    - ((offset_and_counts.y + offset_and_counts.z) as f32)
+                    - ((offset_and_counts.y.add(offset_and_counts.z)) as f32)
                         .smooth_step(0.0, max_light_complexity_per_cluster));
 
         output_color
