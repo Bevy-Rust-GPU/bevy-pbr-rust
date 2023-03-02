@@ -1,3 +1,5 @@
 entry_points.json
 Cargo.lock
+
+.cargo/
 target/
