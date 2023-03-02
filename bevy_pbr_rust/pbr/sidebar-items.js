@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["bindings",""],["dither",""],["entry_points",""],["lighting",""],["standard_material",""],["tonemapper",""]],"struct":[["BaseMaterial",""],["PbrInput",""]]};

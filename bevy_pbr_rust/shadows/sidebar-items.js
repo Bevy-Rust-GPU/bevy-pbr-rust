@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"trait":[["DirectionalShadowTextures",""],["PointShadowTextures",""]],"type":[["DirectionalShadowTexture",""],["DirectionalShadowTextureArray",""],["PointShadowTexture",""],["PointShadowTextureArray",""]]};

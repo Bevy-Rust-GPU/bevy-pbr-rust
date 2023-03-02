@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"mod":[["bindings",""],["cluster_light_index_lists",""],["cluster_offsets_and_counts",""],["directional_light",""],["globals",""],["lights",""],["point_light",""],["point_lights",""],["view",""]]};

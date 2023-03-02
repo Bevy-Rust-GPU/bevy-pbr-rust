@@ -1,0 +1,1 @@
+window.SIDEBAR_ITEMS = {"constant":[["DIRECTIONAL_LIGHT_FLAGS_SHADOWS_ENABLED_BIT",""]],"struct":[["DirectionalLight",""]]};
