@@ -29,7 +29,7 @@
 </span><span class="kw">impl </span>WasmPadding <span class="kw">for </span>f32 {}
 
 <span class="attr">#[repr(C)]
-</span><span class="kw">pub struct </span>Globals&lt;P: WasmPadding&gt; {
+</span><span class="kw">pub struct </span>Globals&lt;P: WasmPadding = ()&gt; {
     <span class="comment">// The time since startup in seconds
     // Wraps to 0 after 1 hour.
     </span><span class="kw">pub </span>time: f32,
