@@ -48,10 +48,6 @@ jobs:
         cd rust-gpu
         cargo build --release --verbose
 
-    - name: where
-      run:
-        where librustc_driver-7dc221ef4086baf7.so
-
     - name: find
       run:
         find librustc_driver-7dc221ef4086baf7.so
