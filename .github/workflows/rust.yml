@@ -55,17 +55,18 @@ jobs:
         echo "[build]" >> .cargo/config.toml
         echo "target = \"spirv-unknown-spv1.5\"" >> .cargo/config.toml
         echo "rustflags = [" >> .cargo/config.toml
-        echo "  \"-Zcodegen-backend=${{ github.workspace }}/rust-gpu/target/release/librustc_codegen_spirv.so\","
-        echo "  \"-Zbinary-dep-depinfo\","
-        echo "  \"-Csymbol-mangling-version=v0\","
-        echo "  \"-Zcrate-attr=feature(register_tool)\","
-        echo "  \"-Zcrate-attr=register_tool(rust_gpu)\""
+        echo "  \"-Zcodegen-backend=${{ github.workspace }}/rust-gpu/target/release/librustc_codegen_spirv.so\"," >> .cargo/config.toml
+        echo "  \"-Zbinary-dep-depinfo\"," >> .cargo/config.toml
+        echo "  \"-Csymbol-mangling-version=v0\"," >> .cargo/config.toml
+        echo "  \"-Zcrate-attr=feature(register_tool)\"," >> .cargo/config.toml
+        echo "  \"-Zcrate-attr=register_tool(rust_gpu)\"" >> .cargo/config.toml
         echo "]" >> .cargo/config.toml
         echo "" >> .cargo/config.toml
         echo "[unstable]" >> .cargo/config.toml
         echo "build-std=[\"core\"]" >> .cargo/config.toml
         echo "build-std-features=[\"compiler-builtins-mem\"]" >> .cargo/config.toml
-        cargo build --verbose
+        echo "config.toml:"
+        cat .cargo/config.toml
 
     - name: Build shader
       run: |
