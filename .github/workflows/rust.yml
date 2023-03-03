@@ -16,6 +16,10 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+    - name: List working directory
+      run: ls
+    - name: List workspace directory
+      run: ls ${{ github.workspace }}
     - name: Build
       run: cargo build --verbose
     - name: Run tests
