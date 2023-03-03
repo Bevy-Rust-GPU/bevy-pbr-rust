@@ -24,6 +24,12 @@ jobs:
         repository: 'EmbarkStudios/rust-gpu'
         path: 'rust-gpu'
 
+    - name: apt update
+      run: sudo apt update
+
+    - name: rustup update
+      run: rustup update
+
     - name: Install dependencies
       run: sudo apt install libxkbcommon-dev
 
