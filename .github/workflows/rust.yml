@@ -24,6 +24,9 @@ jobs:
         repository: 'EmbarkStudios/rust-gpu'
         path: 'rust-gpu'
 
+    - name: Install dependencies
+      run: sudo apt install libxkbcommon-dev
+
     - name: Cache
       uses: actions/cache@v2
       with:
@@ -74,7 +77,3 @@ jobs:
         cd shader
         cargo test --verbose
 
-    - name: Cargo doc
-      run: |
-        cd shader
-        cargo doc --release --no-deps --verbose
