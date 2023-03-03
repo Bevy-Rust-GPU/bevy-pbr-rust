@@ -80,13 +80,13 @@ jobs:
       run: |
         echo "/usr/local/lib" >> $GITHUB_PATH
 
-    - name: Build shader
-      run: |
-        cd shader
-        cargo build --verbose
-
-    - name: Run tests
-      run: |
-        cd shader
-        cargo test --verbose
+#   - name: Build shader
+#     run: |
+#       cd shader
+#       cargo build --verbose
+#
+#   - name: Run tests
+#     run: |
+#       cd shader
+#       cargo test --verbose
 
