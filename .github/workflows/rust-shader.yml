@@ -48,10 +48,9 @@ jobs:
         cd rust-gpu
         cargo build --release --verbose
 
-#   - name: find
-#     run: |
-#       cd /
-#       find librustc_driver-7dc221ef4086baf7.so
+    - name: tree cargo
+      run: |
+        tree ~/.cargo
  
     - name: Emplace .cargo/config.toml
       run: |
