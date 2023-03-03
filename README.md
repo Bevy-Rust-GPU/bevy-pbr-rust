@@ -10,7 +10,7 @@ A Rust reimplementation of `bevy_pbr`'s WGSL shaders.
 
 ## Implementation
 
-Shader def conditionals are implemented using compile-time trait generics, and entrypoint permutations are generated via macro annotations.
+Shader def conditionals are implemented using compile-time trait generics, and entrypoint permutations are generated via `permutate-macro`.
 
 ## Compatibility
 
