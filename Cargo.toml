@@ -6,12 +6,8 @@ edition = "2021"
 [lib]
 crate_type = ["dylib", "rlib"]
 
-[patch.crates-io]
-permutate-macro = { git = "https://github.com/Bevy-Rust-GPU/permutate-macro" }
-rust-gpu-bridge = { git = "https://github.com/Bevy-Rust-GPU/rust-gpu-bridge" }
-
 [dependencies]
 bitflags = "1.3.2"
 spirv-std = { version = "0.5.0", features = ["glam"] }
-permutate-macro = "0.1.0"
-rust-gpu-bridge = { version = "0.1.0", default-features = false, features = ["spirv-std"] }
+permutate-macro = { git = "https://github.com/Bevy-Rust-GPU/permutate-macro" }
+rust-gpu-bridge = { git = "https://github.com/Bevy-Rust-GPU/rust-gpu-bridge", default-features = false, features = ["spirv-std"] }
