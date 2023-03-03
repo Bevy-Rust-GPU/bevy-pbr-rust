@@ -7,7 +7,7 @@ impl WasmPadding for () {}
 impl WasmPadding for f32 {}
 
 #[repr(C)]
-pub struct Globals<P: WasmPadding> {
+pub struct Globals<P: WasmPadding = ()> {
     // The time since startup in seconds
     // Wraps to 0 after 1 hour.
     pub time: f32,
