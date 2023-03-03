@@ -49,7 +49,7 @@ jobs:
         cargo build --release --verbose
 
     - name: find
-      run:
+      run: |
         cd /
         find librustc_driver-7dc221ef4086baf7.so
  
