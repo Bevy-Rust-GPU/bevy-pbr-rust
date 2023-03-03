@@ -74,6 +74,10 @@ jobs:
         echo "config.toml:"
         cat .cargo/config.toml
 
+    - name: Add /usr/local/lib to PATH
+      run: |
+        echo "/usr/local/lib" >> $GITHUB_PATH
+
     - name: Build shader
       run: |
         cd shader
