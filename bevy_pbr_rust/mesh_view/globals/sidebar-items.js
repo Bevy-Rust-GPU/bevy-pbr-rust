@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["Globals",""]],"trait":[["WasmPadding",""]]};
+window.SIDEBAR_ITEMS = {"struct":[["Globals",""],["GlobalsWasm",""]]};
