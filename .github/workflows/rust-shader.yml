@@ -48,9 +48,12 @@ jobs:
         cd rust-gpu
         cargo build --release --verbose
 
-    - name: which rustc
-      run: |
-        which rustc
+    - name: Install latest nightly
+      uses: actions-rs/toolchain@v1
+      with:
+          toolchain: nightly-2022-12-18-x86_64-unknown-linux-gnu
+          override: true
+          components: rustfmt, clippy
  
     - name: Emplace .cargo/config.toml
       run: |
