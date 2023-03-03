@@ -48,13 +48,9 @@ jobs:
         cd rust-gpu
         cargo build --release --verbose
 
-    - name: cat cargo env
+    - name: which rustc
       run: |
-        cat ~/.cargo/env
-
-    - name: ldconfig /usr/local/lib
-      run: |
-        sudo ldconfig -n /usr/local/lib
+        which rustc
  
     - name: Emplace .cargo/config.toml
       run: |
