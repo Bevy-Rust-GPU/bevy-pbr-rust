@@ -49,12 +49,11 @@ impl Mesh {
         // bool(u32) is false if 0u else true
         // f32(bool) is 1.0 if true else 0.0
         // * 2.0 - 1.0 remaps 0.0 or 1.0 to -1.0 or 1.0 respectively
-        (if self.flags & MESH_FLAGS_SIGN_DETERMINANT_MODEL_3X3_BIT != 0 {
+        if self.flags & MESH_FLAGS_SIGN_DETERMINANT_MODEL_3X3_BIT != 0 {
             1.0
         } else {
-            2.0
-        } * 2.0
-            - 1.0)
+            -1.0
+        }
     }
 
     pub fn mesh_tangent_local_to_world(&self, model: Mat4, vertex_tangent: Vec4) -> Vec4 {
