@@ -76,7 +76,6 @@
 <a href="#76" id="76">76</a>
 <a href="#77" id="77">77</a>
 <a href="#78" id="78">78</a>
-<a href="#79" id="79">79</a>
 </pre><pre class="rust"><code><span class="kw">pub mod </span>base_material_normal_map;
 <span class="kw">pub mod </span>bindings;
 <span class="kw">pub mod </span>entry_points;
@@ -128,12 +127,11 @@
         <span class="comment">// bool(u32) is false if 0u else true
         // f32(bool) is 1.0 if true else 0.0
         // * 2.0 - 1.0 remaps 0.0 or 1.0 to -1.0 or 1.0 respectively
-        </span>(<span class="kw">if </span><span class="self">self</span>.flags &amp; MESH_FLAGS_SIGN_DETERMINANT_MODEL_3X3_BIT != <span class="number">0 </span>{
+        </span><span class="kw">if </span><span class="self">self</span>.flags &amp; MESH_FLAGS_SIGN_DETERMINANT_MODEL_3X3_BIT != <span class="number">0 </span>{
             <span class="number">1.0
         </span>} <span class="kw">else </span>{
-            <span class="number">2.0
-        </span>} * <span class="number">2.0
-            </span>- <span class="number">1.0</span>)
+            -<span class="number">1.0
+        </span>}
     }
 
     <span class="kw">pub fn </span>mesh_tangent_local_to_world(<span class="kw-2">&amp;</span><span class="self">self</span>, model: Mat4, vertex_tangent: Vec4) -&gt; Vec4 {
