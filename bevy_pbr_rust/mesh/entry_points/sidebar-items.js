@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["fragment",""],["vertex_impl",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["fragment",""],["vertex__none__none__none",""],["vertex__some__some__some",""]]};

@@ -357,52 +357,6 @@
 <a href="#357" id="357">357</a>
 <a href="#358" id="358">358</a>
 <a href="#359" id="359">359</a>
-<a href="#360" id="360">360</a>
-<a href="#361" id="361">361</a>
-<a href="#362" id="362">362</a>
-<a href="#363" id="363">363</a>
-<a href="#364" id="364">364</a>
-<a href="#365" id="365">365</a>
-<a href="#366" id="366">366</a>
-<a href="#367" id="367">367</a>
-<a href="#368" id="368">368</a>
-<a href="#369" id="369">369</a>
-<a href="#370" id="370">370</a>
-<a href="#371" id="371">371</a>
-<a href="#372" id="372">372</a>
-<a href="#373" id="373">373</a>
-<a href="#374" id="374">374</a>
-<a href="#375" id="375">375</a>
-<a href="#376" id="376">376</a>
-<a href="#377" id="377">377</a>
-<a href="#378" id="378">378</a>
-<a href="#379" id="379">379</a>
-<a href="#380" id="380">380</a>
-<a href="#381" id="381">381</a>
-<a href="#382" id="382">382</a>
-<a href="#383" id="383">383</a>
-<a href="#384" id="384">384</a>
-<a href="#385" id="385">385</a>
-<a href="#386" id="386">386</a>
-<a href="#387" id="387">387</a>
-<a href="#388" id="388">388</a>
-<a href="#389" id="389">389</a>
-<a href="#390" id="390">390</a>
-<a href="#391" id="391">391</a>
-<a href="#392" id="392">392</a>
-<a href="#393" id="393">393</a>
-<a href="#394" id="394">394</a>
-<a href="#395" id="395">395</a>
-<a href="#396" id="396">396</a>
-<a href="#397" id="397">397</a>
-<a href="#398" id="398">398</a>
-<a href="#399" id="399">399</a>
-<a href="#400" id="400">400</a>
-<a href="#401" id="401">401</a>
-<a href="#402" id="402">402</a>
-<a href="#403" id="403">403</a>
-<a href="#404" id="404">404</a>
-<a href="#405" id="405">405</a>
 </pre><pre class="rust"><code><span class="kw">use </span>permutate_macro::permutate;
 <span class="kw">use </span>spirv_std::{
     glam::{Vec2, Vec3, Vec4},
@@ -410,13 +364,16 @@
 };
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::{
-    BaseColorTexture, BaseMaterialNormalMap, ClusterDebugVisualization, ClusterLightIndexLists,
-    ClusterOffsetsAndCounts, DirectionalShadowTextures, Dither, EmissiveTexture, Lights, Mesh,
-    MetallicRoughnessTexture, NormalMapTexture, OcclusionTexture, PbrInput, PointLights,
-    PointShadowTextures, Skinning, Tonemapper, VertexColor, VertexNormal, VertexPosition,
-    VertexTangent, VertexUv, View, STANDARD_MATERIAL_FLAGS_DOUBLE_SIDED_BIT,
-    STANDARD_MATERIAL_FLAGS_UNLIT_BIT,
+    BaseColorTexture, EmissiveTexture, Lights, Mesh, MetallicRoughnessTexture, NormalMapTexture,
+    OcclusionTexture, PbrInput, View, STANDARD_MATERIAL_FLAGS_BASE_COLOR_TEXTURE_BIT,
+    STANDARD_MATERIAL_FLAGS_DOUBLE_SIDED_BIT, STANDARD_MATERIAL_FLAGS_EMISSIVE_TEXTURE_BIT,
+    STANDARD_MATERIAL_FLAGS_FLIP_NORMAL_MAP_Y,
+    STANDARD_MATERIAL_FLAGS_METALLIC_ROUGHNESS_TEXTURE_BIT,
+    STANDARD_MATERIAL_FLAGS_OCCLUSION_TEXTURE_BIT,
+    STANDARD_MATERIAL_FLAGS_TWO_COMPONENT_NORMAL_MAP, STANDARD_MATERIAL_FLAGS_UNLIT_BIT,
 };
+
+<span class="kw">use </span>spirv_std::num_traits::Float;
 
 <span class="kw">use </span><span class="kw">super</span>::BaseMaterial;
 
@@ -424,8 +381,6 @@
     parameters = {
         texture_format: texture | array,
         buffer_format: uniform | storage,
-        position: some | none,
-        normal: some | none,
         uv: some | none,
         tangent: some | none,
         color: some | none,
@@ -436,6 +391,8 @@
         cluster_debug: debug_z_slices | debug_cluster_light_complexity | debug_cluster_coherency | none
     },
     permutations = [
+        (array, uniform, some, some, some, some, some, some, some, debug_z_slices),
+        (array, uniform, none, none, none, none, none, none, none, none),
         file(<span class="string">&quot;../../entry_points.json&quot;</span>, <span class="string">&quot;pbr::entry_points&quot;</span>),
         env(<span class="string">&quot;BEVY_PBR_RUST_PBR_FRAGMENT_PERMUTATIONS&quot;</span>, <span class="string">&quot;pbr::entry_points&quot;</span>)
     ]
@@ -491,24 +448,57 @@
     </span>cluster_offsets_and_counts: <span class="kw-2">&amp;</span><span class="kw">crate</span>::prelude::ClusterOffsetsAndCountsStorage,
 
     <span class="attr">#[spirv(uniform, descriptor_set = <span class="number">1</span>, binding = <span class="number">0</span>)] </span>material: <span class="kw-2">&amp;</span>BaseMaterial,
-    <span class="attr">#[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">1</span>)] </span>base_color_texture: <span class="kw-2">&amp;</span>BaseColorTexture,
-    <span class="attr">#[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">2</span>)] </span>base_color_sampler: <span class="kw-2">&amp;</span>Sampler,
-    <span class="attr">#[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">3</span>)] </span>emissive_texture: <span class="kw-2">&amp;</span>EmissiveTexture,
-    <span class="attr">#[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">4</span>)] </span>emissive_sampler: <span class="kw-2">&amp;</span>Sampler,
-    <span class="attr">#[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">5</span>)] </span>metallic_roughness_texture: <span class="kw-2">&amp;</span>MetallicRoughnessTexture,
-    <span class="attr">#[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">6</span>)] </span>metallic_roughness_sampler: <span class="kw-2">&amp;</span>Sampler,
-    <span class="attr">#[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">7</span>)] </span>occlusion_texture: <span class="kw-2">&amp;</span>OcclusionTexture,
-    <span class="attr">#[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">8</span>)] </span>occlusion_sampler: <span class="kw-2">&amp;</span>Sampler,
-    <span class="attr">#[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">9</span>)] </span>normal_map_texture: <span class="kw-2">&amp;</span>NormalMapTexture,
-    <span class="attr">#[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">10</span>)] </span>normal_map_sampler: <span class="kw-2">&amp;</span>Sampler,
+
+    <span class="attr">#[allow(unused_variables)]
+    #[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">1</span>)]
+    </span>base_color_texture: <span class="kw-2">&amp;</span>BaseColorTexture,
+
+    <span class="attr">#[allow(unused_variables)]
+    #[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">2</span>)]
+    </span>base_color_sampler: <span class="kw-2">&amp;</span>Sampler,
+
+    <span class="attr">#[allow(unused_variables)]
+    #[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">3</span>)]
+    </span>emissive_texture: <span class="kw-2">&amp;</span>EmissiveTexture,
+
+    <span class="attr">#[allow(unused_variables)]
+    #[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">4</span>)]
+    </span>emissive_sampler: <span class="kw-2">&amp;</span>Sampler,
+
+    <span class="attr">#[allow(unused_variables)]
+    #[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">5</span>)]
+    </span>metallic_roughness_texture: <span class="kw-2">&amp;</span>MetallicRoughnessTexture,
+
+    <span class="attr">#[allow(unused_variables)]
+    #[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">6</span>)]
+    </span>metallic_roughness_sampler: <span class="kw-2">&amp;</span>Sampler,
+
+    <span class="attr">#[allow(unused_variables)]
+    #[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">7</span>)]
+    </span>occlusion_texture: <span class="kw-2">&amp;</span>OcclusionTexture,
+
+    <span class="attr">#[allow(unused_variables)]
+    #[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">8</span>)]
+    </span>occlusion_sampler: <span class="kw-2">&amp;</span>Sampler,
+
+    <span class="attr">#[allow(unused_variables)]
+    #[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">9</span>)]
+    </span>normal_map_texture: <span class="kw-2">&amp;</span>NormalMapTexture,
+
+    <span class="attr">#[allow(unused_variables)]
+    #[spirv(descriptor_set = <span class="number">1</span>, binding = <span class="number">10</span>)]
+    </span>normal_map_sampler: <span class="kw-2">&amp;</span>Sampler,
 
     <span class="attr">#[spirv(uniform, descriptor_set = <span class="number">2</span>, binding = <span class="number">0</span>)] </span>mesh: <span class="kw-2">&amp;</span>Mesh,
 
-    <span class="attr">#[spirv(front_facing)] </span>in_is_front: bool,
+    <span class="attr">#[allow(unused_variables)]
+    #[spirv(front_facing)]
+    </span>in_is_front: bool,
+
     <span class="attr">#[spirv(position)] </span>in_frag_coord: Vec4,
     in_world_position: Vec4,
     in_world_normal: Vec3,
-    in_uv: Vec2,
+    <span class="attr">#[allow(unused_variables)] </span>in_uv: Vec2,
     <span class="attr">#[permutate(tangent = some)] </span>in_tangent: Vec4,
     <span class="attr">#[permutate(color = some)] </span>in_color: Vec4,
     output_color: <span class="kw-2">&amp;mut </span>Vec4,
@@ -538,51 +528,6 @@
     <span class="attr">#[permutate(buffer_format = storage)]
     </span><span class="kw">type </span>_ClusterOffsetsAndCounts = <span class="kw">crate</span>::prelude::ClusterOffsetsAndCountsStorage;
 
-    <span class="attr">#[permutate(position = some)]
-    </span><span class="kw">type </span>_Position = Vec4;
-    <span class="attr">#[permutate(position = none)]
-    </span><span class="kw">type </span>_Position = ();
-
-    <span class="attr">#[permutate(normal = some)]
-    </span><span class="kw">type </span>_Normal = Vec3;
-    <span class="attr">#[permutate(normal = none)]
-    </span><span class="kw">type </span>_Normal = ();
-
-    <span class="attr">#[permutate(uv = some)]
-    </span><span class="kw">type </span>_Uv = Vec2;
-    <span class="attr">#[permutate(uv = none)]
-    </span><span class="kw">type </span>_Uv = ();
-
-    <span class="attr">#[permutate(tangent = some)]
-    </span><span class="kw">type </span>_Tangent = Vec4;
-    <span class="attr">#[permutate(tangent = none)]
-    </span><span class="kw">type </span>_Tangent = ();
-
-    <span class="attr">#[permutate(color = some)]
-    </span><span class="kw">type </span>_Color = Vec4;
-    <span class="attr">#[permutate(color = none)]
-    </span><span class="kw">type </span>_Color = ();
-
-    <span class="attr">#[permutate(normal_map = some)]
-    </span><span class="kw">type </span>_NormalMap = <span class="kw">crate</span>::prelude::StandardMaterialNormalMap;
-    <span class="attr">#[permutate(normal_map = none)]
-    </span><span class="kw">type </span>_NormalMap = ();
-
-    <span class="attr">#[permutate(skinned = some)]
-    </span><span class="kw">type </span>_Skinned = <span class="kw">crate</span>::prelude::SkinnedMesh;
-    <span class="attr">#[permutate(skinned = none)]
-    </span><span class="kw">type </span>_Skinned = ();
-
-    <span class="attr">#[permutate(tonemap = some)]
-    </span><span class="kw">type </span>_Tonemap = <span class="kw">crate</span>::prelude::TonemapInShader;
-    <span class="attr">#[permutate(tonemap = none)]
-    </span><span class="kw">type </span>_Tonemap = ();
-
-    <span class="attr">#[permutate(deband = some)]
-    </span><span class="kw">type </span>_Deband = <span class="kw">crate</span>::prelude::DebandDither;
-    <span class="attr">#[permutate(deband = none)]
-    </span><span class="kw">type </span>_Deband = ();
-
     <span class="attr">#[permutate(cluster_debug = debug_z_slices)]
     </span><span class="kw">type </span>_ClusterDebug = <span class="kw">crate</span>::prelude::DebugZSlices;
     <span class="attr">#[permutate(cluster_debug = debug_cluster_light_complexity)]
@@ -592,132 +537,28 @@
     <span class="attr">#[permutate(cluster_debug = none)]
     </span><span class="kw">type </span>_ClusterDebug = ();
 
-    fragment_impl::&lt;
-        _PointShadow,
-        _DirectionalShadow,
-        _PointLights,
-        _ClusterLightIndexLists,
-        _ClusterOffsetsAndCounts,
-        _Position,
-        _Normal,
-        _Uv,
-        _Tangent,
-        _Color,
-        _NormalMap,
-        _Skinned,
-        _Tonemap,
-        _Deband,
-        _ClusterDebug,
-    &gt;(
-        view,
-        lights,
-        point_shadow_textures,
-        point_shadow_textures_sampler,
-        directional_shadow_textures,
-        directional_shadow_textures_sampler,
-        point_lights,
-        cluster_light_index_lists,
-        cluster_offsets_and_counts,
-        material,
-        base_color_texture,
-        base_color_sampler,
-        emissive_texture,
-        emissive_sampler,
-        metallic_roughness_texture,
-        metallic_roughness_sampler,
-        occlusion_texture,
-        occlusion_sampler,
-        normal_map_texture,
-        normal_map_sampler,
-        mesh,
-        in_is_front,
-        in_frag_coord,
-        <span class="attr">#[permutate(position = some)]
-        </span><span class="kw-2">&amp;</span>in_world_position,
-        <span class="attr">#[permutate(position = none)]
-        </span><span class="kw-2">&amp;</span>(),
-        <span class="attr">#[permutate(normal = some)]
-        </span><span class="kw-2">&amp;</span>in_world_normal,
-        <span class="attr">#[permutate(normal = none)]
-        </span><span class="kw-2">&amp;</span>(),
-        <span class="attr">#[permutate(uv = some)]
-        </span><span class="kw-2">&amp;</span>in_uv,
-        <span class="attr">#[permutate(uv = none)]
-        </span><span class="kw-2">&amp;</span>(),
-        <span class="attr">#[permutate(tangent = some)]
-        </span><span class="kw-2">&amp;</span>in_tangent,
-        <span class="attr">#[permutate(tangent = none)]
-        </span><span class="kw-2">&amp;</span>(),
-        <span class="attr">#[permutate(color = some)]
-        </span><span class="kw-2">&amp;</span>in_color,
-        <span class="attr">#[permutate(color = none)]
-        </span><span class="kw-2">&amp;</span>(),
-        output_color,
-    )
-}
+    <span class="kw">let </span>vertex_position = in_world_position;
+    <span class="kw">let </span>vertex_normal = in_world_normal;
 
-<span class="kw">pub fn </span>fragment_impl&lt;
-    PS: PointShadowTextures,
-    DS: DirectionalShadowTextures,
-    PL: PointLights,
-    CL: ClusterLightIndexLists,
-    CO: ClusterOffsetsAndCounts,
-    VP: VertexPosition,
-    VN: VertexNormal,
-    VU: VertexUv,
-    VT: VertexTangent,
-    VC: VertexColor,
-    N: BaseMaterialNormalMap,
-    SM: Skinning,
-    TM: Tonemapper,
-    DT: Dither,
-    CD: ClusterDebugVisualization,
-&gt;(
-    view: <span class="kw-2">&amp;</span>View,
-    lights: <span class="kw-2">&amp;</span>Lights,
-    point_shadow_textures: <span class="kw-2">&amp;</span>PS,
-    point_shadow_textures_sampler: <span class="kw-2">&amp;</span>Sampler,
-    directional_shadow_textures: <span class="kw-2">&amp;</span>DS,
-    directional_shadow_textures_sampler: <span class="kw-2">&amp;</span>Sampler,
-    point_lights: <span class="kw-2">&amp;</span>PL,
-    cluster_light_index_lists: <span class="kw-2">&amp;</span>CL,
-    cluster_offsets_and_counts: <span class="kw-2">&amp;</span>CO,
+    <span class="attr">#[permutate(uv = some)]
+    </span><span class="kw">let </span>vertex_uv = <span class="kw-2">&amp;</span>in_uv;
 
-    material: <span class="kw-2">&amp;</span>BaseMaterial,
-    base_color_texture: <span class="kw-2">&amp;</span>BaseColorTexture,
-    base_color_sampler: <span class="kw-2">&amp;</span>Sampler,
-    emissive_texture: <span class="kw-2">&amp;</span>EmissiveTexture,
-    emissive_sampler: <span class="kw-2">&amp;</span>Sampler,
-    metallic_roughness_texture: <span class="kw-2">&amp;</span>MetallicRoughnessTexture,
-    metallic_roughness_sampler: <span class="kw-2">&amp;</span>Sampler,
-    occlusion_texture: <span class="kw-2">&amp;</span>OcclusionTexture,
-    occlusion_sampler: <span class="kw-2">&amp;</span>Sampler,
-    normal_map_texture: <span class="kw-2">&amp;</span>NormalMapTexture,
-    normal_map_sampler: <span class="kw-2">&amp;</span>Sampler,
+    <span class="attr">#[permutate(color = some)]
+    </span><span class="kw">let </span>vertex_color = <span class="kw-2">&amp;</span>in_color;
 
-    mesh: <span class="kw-2">&amp;</span>Mesh,
+    <span class="attr">#[permutate(color = some)]
+    </span><span class="kw">let </span>vertex_tangent = <span class="kw-2">&amp;</span>in_tangent;
 
-    in_is_front: bool,
-    in_frag_coord: Vec4,
-
-    vertex_position: <span class="kw-2">&amp;</span>VP,
-    vertex_normal: <span class="kw-2">&amp;</span>VN,
-    vertex_uv: <span class="kw-2">&amp;</span>VU,
-    vertex_tangent: <span class="kw-2">&amp;</span>VT,
-    vertex_color: <span class="kw-2">&amp;</span>VC,
-
-    output_color: <span class="kw-2">&amp;mut </span>Vec4,
-) {
     <span class="kw-2">*</span>output_color = material.base.base_color;
 
-    <span class="kw-2">*</span>output_color = vertex_color.apply(<span class="kw-2">*</span>output_color);
+    <span class="attr">#[permutate(color = some)]
+    </span><span class="kw-2">*</span>output_color <span class="kw-2">*</span>= <span class="kw-2">*</span>vertex_color;
 
-    vertex_uv.sample_base_color_texture(
-        base_color_texture,
-        base_color_sampler,
-        material,
-        output_color,
-    );
+    <span class="attr">#[permutate(uv = some)]
+    </span><span class="kw">if </span>(material.base.flags &amp; STANDARD_MATERIAL_FLAGS_BASE_COLOR_TEXTURE_BIT) != <span class="number">0 </span>{
+        <span class="kw-2">*</span>output_color =
+            <span class="kw-2">*</span>output_color * base_color_texture.sample::&lt;f32, Vec4&gt;(<span class="kw-2">*</span>base_color_sampler, <span class="kw-2">*</span>vertex_uv);
+    }
 
     <span class="comment">// NOTE: Unlit bit not set means == 0 is true, so the true case is if lit
     </span><span class="kw">if </span>material.base.flags &amp; STANDARD_MATERIAL_FLAGS_UNLIT_BIT == <span class="number">0 </span>{
@@ -731,82 +572,149 @@
         pbr_input.material.alpha_cutoff = material.base.alpha_cutoff;
 
         <span class="comment">// TODO use .a for exposure compensation in HDR
-        </span><span class="kw">let </span><span class="kw-2">mut </span>emissive = material.base.emissive;
+        </span><span class="kw">let </span>emissive = material.base.emissive;
 
-        vertex_uv.sample_emissive_texture(
-            emissive_texture,
-            emissive_sampler,
-            material,
-            <span class="kw-2">&amp;mut </span>emissive,
-        );
+        <span class="attr">#[permutate(uv = some)]
+        </span><span class="kw">let </span>emissive = <span class="kw">if </span>(material.base.flags &amp; STANDARD_MATERIAL_FLAGS_EMISSIVE_TEXTURE_BIT) != <span class="number">0
+        </span>{
+            (emissive.truncate()
+                * emissive_texture
+                    .sample::&lt;f32, Vec4&gt;(<span class="kw-2">*</span>emissive_sampler, <span class="kw-2">*</span>vertex_uv)
+                    .truncate())
+            .extend(<span class="number">1.0</span>)
+        } <span class="kw">else </span>{
+            emissive
+        };
 
         pbr_input.material.emissive = emissive;
 
-        <span class="kw">let </span><span class="kw-2">mut </span>metallic = material.base.metallic;
-        <span class="kw">let </span><span class="kw-2">mut </span>perceptual_roughness = material.base.perceptual_roughness;
+        <span class="attr">#[allow(unused_mut)]
+        </span><span class="kw">let </span><span class="kw-2">mut </span>metallic = material.base.metallic;
 
-        vertex_uv.sample_metallic_roughness_texture(
-            metallic_roughness_texture,
-            metallic_roughness_sampler,
-            material,
-            <span class="kw-2">&amp;mut </span>metallic,
-            <span class="kw-2">&amp;mut </span>perceptual_roughness,
-        );
+        <span class="attr">#[allow(unused_mut)]
+        </span><span class="kw">let </span><span class="kw-2">mut </span>perceptual_roughness = material.base.perceptual_roughness;
+
+        <span class="attr">#[permutate(uv = some)]
+        </span><span class="kw">if </span>(material.base.flags &amp; STANDARD_MATERIAL_FLAGS_METALLIC_ROUGHNESS_TEXTURE_BIT) != <span class="number">0 </span>{
+            <span class="kw">let </span>metallic_roughness = metallic_roughness_texture
+                .sample::&lt;f32, Vec4&gt;(<span class="kw-2">*</span>metallic_roughness_sampler, <span class="kw-2">*</span>vertex_uv);
+            <span class="comment">// Sampling from GLTF standard channels for now
+            </span>metallic = metallic * metallic_roughness.z;
+            perceptual_roughness = perceptual_roughness * metallic_roughness.y;
+        }
 
         pbr_input.material.metallic = metallic;
         pbr_input.material.perceptual_roughness = perceptual_roughness;
 
-        <span class="kw">let </span><span class="kw-2">mut </span>occlusion: f32 = <span class="number">1.0</span>;
+        <span class="attr">#[allow(unused_mut)]
+        </span><span class="kw">let </span><span class="kw-2">mut </span>occlusion: f32 = <span class="number">1.0</span>;
 
-        vertex_uv.sample_occlusion_texture(
-            occlusion_texture,
-            occlusion_sampler,
-            material,
-            <span class="kw-2">&amp;mut </span>occlusion,
-        );
+        <span class="attr">#[permutate(uv = some)]
+        </span><span class="kw">if </span>(material.base.flags &amp; STANDARD_MATERIAL_FLAGS_OCCLUSION_TEXTURE_BIT) != <span class="number">0 </span>{
+            occlusion = occlusion_texture
+                .sample::&lt;f32, Vec4&gt;(<span class="kw-2">*</span>occlusion_sampler, <span class="kw-2">*</span>vertex_uv)
+                .x;
+        }
 
         pbr_input.occlusion = occlusion;
 
         pbr_input.frag_coord = in_frag_coord;
-        vertex_position.apply_pbr_position(<span class="kw-2">&amp;mut </span>pbr_input);
-        vertex_normal.prepare_world_normal::&lt;VT, N&gt;(
-            (material.base.flags &amp; STANDARD_MATERIAL_FLAGS_DOUBLE_SIDED_BIT) != <span class="number">0</span>,
-            in_is_front,
-            <span class="kw-2">&amp;mut </span>pbr_input,
-        );
+        pbr_input.world_position = vertex_position;
+        pbr_input.world_normal = vertex_normal;
+
+        <span class="attr">#[permutate(tangent = some)]
+        </span>{
+            <span class="attr">#[permutate(normal_map = some)]
+            </span>{
+                <span class="comment">// NOTE: When NOT using normal-mapping, if looking at the back face of a double-sided
+                // material, the normal needs to be inverted. This is a branchless version of that.
+                </span>pbr_input.world_normal =
+                    (<span class="kw">if </span>!(material.base.flags &amp; STANDARD_MATERIAL_FLAGS_DOUBLE_SIDED_BIT) != <span class="number">0
+                        </span>|| in_is_front
+                    {
+                        <span class="number">1.0
+                    </span>} <span class="kw">else </span>{
+                        <span class="number">0.0
+                    </span>} * <span class="number">2.0
+                        </span>- <span class="number">1.0</span>)
+                        * pbr_input.world_normal;
+            }
+        }
 
         pbr_input.is_orthographic = view.projection.w_axis.w == <span class="number">1.0</span>;
 
-        <span class="kw">let </span>pn = pbr_input.world_normal;
-        pn.apply_pbr_input_n::&lt;VU, VT, N&gt;(
-            material.base.flags,
-            vertex_uv,
-            vertex_tangent,
-            normal_map_texture,
-            normal_map_sampler,
-            <span class="kw-2">&amp;mut </span>pbr_input,
-        );
+        <span class="attr">#[permutate(uv = some)]
+        </span>{
+            <span class="attr">#[permutate(tangent = some)]
+            </span>{
+                <span class="attr">#[permutate(normal_map = some)]
+                </span><span class="comment">// NOTE: The mikktspace method of normal mapping explicitly requires that these NOT be
+                // normalized nor any Gram-Schmidt applied to ensure the vertex normal is orthogonal to the
+                // vertex tangent! Do not change this code unless you really know what you are doing.
+                // http://www.mikktspace.com/
+                </span><span class="kw">let </span>t: Vec3 = vertex_tangent.truncate();
+                <span class="kw">let </span>b: Vec3 = vertex_tangent.w * pbr_input.n.cross(t);
 
-        vertex_position.apply_pbr_v(view, <span class="kw-2">&amp;mut </span>pbr_input);
+                <span class="comment">// Nt is the tangent-space normal.
+                </span><span class="kw">let </span><span class="kw-2">mut </span>nt = normal_map_texture
+                    .sample::&lt;f32, Vec4&gt;(<span class="kw-2">*</span>normal_map_sampler, <span class="kw-2">*</span>vertex_uv)
+                    .truncate();
+                <span class="kw">if </span>(material.base.flags &amp; STANDARD_MATERIAL_FLAGS_TWO_COMPONENT_NORMAL_MAP) != <span class="number">0 </span>{
+                    <span class="comment">// Only use the xy components and derive z for 2-component normal maps.
+                    </span>nt = (nt.truncate() * <span class="number">2.0 </span>- <span class="number">1.0</span>).extend(<span class="number">0.0</span>);
+                    nt.z = (<span class="number">1.0 </span>- nt.x * nt.x - nt.y * nt.y).sqrt();
+                } <span class="kw">else </span>{
+                    nt = nt * <span class="number">2.0 </span>- <span class="number">1.0</span>;
+                }
+                <span class="comment">// Normal maps authored for DirectX require flipping the y component
+                </span><span class="kw">if </span>(material.base.flags &amp; STANDARD_MATERIAL_FLAGS_FLIP_NORMAL_MAP_Y) != <span class="number">0 </span>{
+                    nt.y = -nt.y;
+                }
+                <span class="comment">// NOTE: The mikktspace method of normal mapping applies maps the tangent-space normal from
+                // the normal map texture in this way to be an EXACT inverse of how the normal map baker
+                // calculates the normal maps so there is no error introduced. Do not change this code
+                // unless you really know what you are doing.
+                // http://www.mikktspace.com/
+                </span>pbr_input.n = nt.x * t + nt.y * b + nt.z * pbr_input.n;
+            }
 
-        <span class="kw-2">*</span>output_color = pbr_input.pbr::&lt;PL, DS, PS, CL, CO, CD&gt;(
-            view,
-            mesh,
-            lights,
-            point_lights,
-            cluster_light_index_lists,
-            cluster_offsets_and_counts,
-            directional_shadow_textures,
-            directional_shadow_textures_sampler,
-            point_shadow_textures,
-            point_shadow_textures_sampler,
-        );
+            pbr_input.n = pbr_input.world_normal.normalize();
+        }
+
+        pbr_input.v = view.calculate_view(vertex_position, pbr_input.is_orthographic);
+
+        <span class="kw-2">*</span>output_color = pbr_input
+            .pbr::&lt;_PointLights, _DirectionalShadow, _PointShadow, _ClusterLightIndexLists, _ClusterOffsetsAndCounts, _ClusterDebug&gt;(
+                view,
+                mesh,
+                lights,
+                point_lights,
+                cluster_light_index_lists,
+                cluster_offsets_and_counts,
+                directional_shadow_textures,
+                directional_shadow_textures_sampler,
+                point_shadow_textures,
+                point_shadow_textures_sampler,
+            );
     } <span class="kw">else </span>{
         <span class="kw-2">*</span>output_color = material.base.alpha_discard(<span class="kw-2">*</span>output_color);
     }
 
-    <span class="kw-2">*</span>output_color = TM::tonemap(<span class="kw-2">*</span>output_color);
-    <span class="kw-2">*</span>output_color = DT::dither(in_frag_coord, <span class="kw-2">*</span>output_color);
+    <span class="attr">#[permutate(tonemap = some)]
+    </span><span class="kw-2">*</span>output_color =
+        <span class="kw">crate</span>::prelude::reinhard_luminance(output_color.truncate()).extend(output_color.w);
+
+    <span class="attr">#[permutate(deband = some)]
+    </span><span class="kw-2">*</span>output_color = {
+        <span class="kw">let </span><span class="kw-2">mut </span>output_rgb = output_color.truncate();
+        output_rgb = output_rgb.powf(<span class="number">1.0 </span>/ <span class="number">2.2</span>);
+        output_rgb =
+            output_rgb + <span class="kw">crate</span>::prelude::screen_space_dither(in_frag_coord.truncate().truncate());
+        <span class="comment">// This conversion back to linear space is required because our output texture format is
+        // SRGB; the GPU will assume our output is linear and will apply an SRGB conversion.
+        </span>output_rgb = output_rgb.powf(<span class="number">2.2</span>);
+        output_rgb.extend(output_color.w)
+    };
 }
 </code></pre></div>
 </section></div></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_pbr_rust" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (0468a00ae 2022-12-17)" data-search-js="search-444266647c4dba98.js" data-settings-js="settings-bebeae96e00e4617.js" data-settings-css="settings-58836c674e2f7bd2.css" ></div></body></html>

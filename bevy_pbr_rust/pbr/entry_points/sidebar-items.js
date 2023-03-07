@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["fragment_impl",""]]};
+window.SIDEBAR_ITEMS = {"fn":[["fragment__array__uniform__none__none__none__none__none__none__none__none",""],["fragment__array__uniform__some__some__some__some__some__some__some__debug_z_slices",""]]};

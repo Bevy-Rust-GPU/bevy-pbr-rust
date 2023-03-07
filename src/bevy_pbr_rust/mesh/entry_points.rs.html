@@ -101,21 +101,6 @@
 <a href="#101" id="101">101</a>
 <a href="#102" id="102">102</a>
 <a href="#103" id="103">103</a>
-<a href="#104" id="104">104</a>
-<a href="#105" id="105">105</a>
-<a href="#106" id="106">106</a>
-<a href="#107" id="107">107</a>
-<a href="#108" id="108">108</a>
-<a href="#109" id="109">109</a>
-<a href="#110" id="110">110</a>
-<a href="#111" id="111">111</a>
-<a href="#112" id="112">112</a>
-<a href="#113" id="113">113</a>
-<a href="#114" id="114">114</a>
-<a href="#115" id="115">115</a>
-<a href="#116" id="116">116</a>
-<a href="#117" id="117">117</a>
-<a href="#118" id="118">118</a>
 </pre><pre class="rust"><code><span class="kw">use </span>spirv_std::{
     glam::{Vec2, Vec3, Vec4},
     spirv,
@@ -123,7 +108,12 @@
 
 <span class="kw">use </span>permutate_macro::permutate;
 
-<span class="kw">use </span><span class="kw">crate</span>::prelude::{Mesh, Skinning, VertexNormal, VertexPosition, VertexTangent, View};
+<span class="kw">use crate</span>::{
+    prelude::{Mesh, View},
+    skinning::skin_normals,
+};
+
+<span class="kw">use </span><span class="kw">super</span>::mesh_position_local_to_world;
 
 <span class="attr">#[spirv(vertex)]
 #[allow(non_snake_case)]
@@ -134,6 +124,8 @@
         skinned: some | none
     },
     permutations = [
+        (none, none, none),
+        (some, some, some),
         file(<span class="string">&quot;../../entry_points.json&quot;</span>, <span class="string">&quot;mesh::entry_points&quot;</span>),
         env(<span class="string">&quot;BEVY_PBR_RUST_MESH_VERTEX_PERMUTATIONS&quot;</span>, <span class="string">&quot;mesh::entry_points&quot;</span>)
     ]
@@ -170,29 +162,25 @@
     <span class="attr">#[permutate(tangent = some)]
     </span><span class="kw">let </span><span class="kw-2">mut </span>in_tangent = in_tangent;
 
-    vertex_impl(
-        view,
-        mesh,
-        <span class="kw-2">&amp;mut </span>in_position,
-        <span class="kw-2">&amp;mut </span>in_normal,
-        <span class="attr">#[permutate(tangent = some)]
-        </span><span class="kw-2">&amp;mut </span>in_tangent,
-        <span class="attr">#[permutate(tangent = none)]
-        </span><span class="kw-2">&amp;mut </span>(),
-        <span class="attr">#[permutate(skinned = some)]
-        </span>joint_matrices,
-        <span class="attr">#[permutate(skinned = none)]
-        </span><span class="kw-2">&amp;</span>(),
-        <span class="attr">#[permutate(skinned = some)]
-        </span>in_joint_indices,
-        <span class="attr">#[permutate(skinned = none)]
-        </span>(),
-        <span class="attr">#[permutate(skinned = some)]
-        </span>in_joint_weights,
-        <span class="attr">#[permutate(skinned = none)]
-        </span>(),
-        out_clip_position,
-    );
+    <span class="attr">#[permutate(skinned = some)]
+    </span><span class="kw">let </span>model = in_joint_weights.x * joint_matrices.data[in_joint_indices.x <span class="kw">as </span>usize]
+        + in_joint_weights.y * joint_matrices.data[in_joint_indices.y <span class="kw">as </span>usize]
+        + in_joint_weights.z * joint_matrices.data[in_joint_indices.z <span class="kw">as </span>usize]
+        + in_joint_weights.w * joint_matrices.data[in_joint_indices.w <span class="kw">as </span>usize];
+
+    <span class="attr">#[permutate(skinned = none)]
+    </span><span class="kw">let </span>model = mesh.model;
+
+    <span class="attr">#[permutate(skinned = some)]
+    </span>in_normal = skin_normals(model, in_normal);
+    <span class="attr">#[permutate(skinned = none)]
+    </span>in_normal = mesh.mesh_normal_local_to_world(in_normal);
+
+    in_position = mesh_position_local_to_world(model, in_position);
+    <span class="kw-2">*</span>out_clip_position = view.mesh_position_world_to_clip(in_position);
+
+    <span class="attr">#[permutate(tangent = some)]
+    </span>in_tangent = mesh.mesh_tangent_local_to_world(model, in_tangent);
 
     <span class="kw-2">*</span>out_world_position = in_position;
     <span class="kw-2">*</span>out_world_normal = in_normal;
@@ -203,24 +191,6 @@
 
     <span class="attr">#[permutate(color = some)]
     </span><span class="kw-2">*</span>out_color = in_color;
-}
-
-<span class="kw">pub fn </span>vertex_impl&lt;P: VertexPosition, N: VertexNormal, T: VertexTangent, SM: Skinning&gt;(
-    view: <span class="kw-2">&amp;</span>View,
-    mesh: <span class="kw-2">&amp;</span>Mesh,
-    vertex_position: <span class="kw-2">&amp;mut </span>P,
-    vertex_normal: <span class="kw-2">&amp;mut </span>N,
-    vertex_tangent: <span class="kw-2">&amp;mut </span>T,
-    joint_matrices: <span class="kw-2">&amp;</span>SM,
-    in_joint_indices: SM::JointIndices,
-    in_joint_weights: SM::JointWeights,
-    out_clip_position: <span class="kw-2">&amp;mut </span>Vec4,
-) {
-    <span class="kw">let </span>model = joint_matrices.skin_model(mesh, in_joint_indices, in_joint_weights);
-
-    vertex_normal.skin_normals::&lt;SM&gt;(mesh, model);
-    vertex_position.transform_position(view, mesh, model, out_clip_position);
-    vertex_tangent.transform_tangent(mesh, model);
 }
 
 <span class="attr">#[spirv(fragment)]
