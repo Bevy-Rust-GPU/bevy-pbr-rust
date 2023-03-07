@@ -5,7 +5,12 @@ use spirv_std::{
 
 use permutate_macro::permutate;
 
-use crate::prelude::{Mesh, Skinning, VertexNormal, VertexPosition, VertexTangent, View};
+use crate::{
+    prelude::{Mesh, View},
+    skinning::skin_normals,
+};
+
+use super::mesh_position_local_to_world;
 
 #[spirv(vertex)]
 #[allow(non_snake_case)]
@@ -16,6 +21,8 @@ use crate::prelude::{Mesh, Skinning, VertexNormal, VertexPosition, VertexTangent
         skinned: some | none
     },
     permutations = [
+        (none, none, none),
+        (some, some, some),
         file("../../entry_points.json", "mesh::entry_points"),
         env("BEVY_PBR_RUST_MESH_VERTEX_PERMUTATIONS", "mesh::entry_points")
     ]
@@ -52,29 +59,25 @@ pub fn vertex(
     #[permutate(tangent = some)]
     let mut in_tangent = in_tangent;
 
-    vertex_impl(
-        view,
-        mesh,
-        &mut in_position,
-        &mut in_normal,
-        #[permutate(tangent = some)]
-        &mut in_tangent,
-        #[permutate(tangent = none)]
-        &mut (),
-        #[permutate(skinned = some)]
-        joint_matrices,
-        #[permutate(skinned = none)]
-        &(),
-        #[permutate(skinned = some)]
-        in_joint_indices,
-        #[permutate(skinned = none)]
-        (),
-        #[permutate(skinned = some)]
-        in_joint_weights,
-        #[permutate(skinned = none)]
-        (),
-        out_clip_position,
-    );
+    #[permutate(skinned = some)]
+    let model = in_joint_weights.x * joint_matrices.data[in_joint_indices.x as usize]
+        + in_joint_weights.y * joint_matrices.data[in_joint_indices.y as usize]
+        + in_joint_weights.z * joint_matrices.data[in_joint_indices.z as usize]
+        + in_joint_weights.w * joint_matrices.data[in_joint_indices.w as usize];
+
+    #[permutate(skinned = none)]
+    let model = mesh.model;
+
+    #[permutate(skinned = some)]
+    in_normal = skin_normals(model, in_normal);
+    #[permutate(skinned = none)]
+    in_normal = mesh.mesh_normal_local_to_world(in_normal);
+
+    in_position = mesh_position_local_to_world(model, in_position);
+    *out_clip_position = view.mesh_position_world_to_clip(in_position);
+
+    #[permutate(tangent = some)]
+    in_tangent = mesh.mesh_tangent_local_to_world(model, in_tangent);
 
     *out_world_position = in_position;
     *out_world_normal = in_normal;
@@ -85,24 +88,6 @@ pub fn vertex(
 
     #[permutate(color = some)]
     *out_color = in_color;
-}
-
-pub fn vertex_impl<P: VertexPosition, N: VertexNormal, T: VertexTangent, SM: Skinning>(
-    view: &View,
-    mesh: &Mesh,
-    vertex_position: &mut P,
-    vertex_normal: &mut N,
-    vertex_tangent: &mut T,
-    joint_matrices: &SM,
-    in_joint_indices: SM::JointIndices,
-    in_joint_weights: SM::JointWeights,
-    out_clip_position: &mut Vec4,
-) {
-    let model = joint_matrices.skin_model(mesh, in_joint_indices, in_joint_weights);
-
-    vertex_normal.skin_normals::<SM>(mesh, model);
-    vertex_position.transform_position(view, mesh, model, out_clip_position);
-    vertex_tangent.transform_tangent(mesh, model);
 }
 
 #[spirv(fragment)]

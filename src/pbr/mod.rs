@@ -1,9 +1,7 @@
 pub mod bindings;
-pub mod dither;
 pub mod entry_points;
 pub mod lighting;
 pub mod standard_material;
-pub mod tonemapper;
 
 use spirv_std::{
     glam::{Vec3, Vec4},

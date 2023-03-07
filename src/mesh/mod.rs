@@ -1,13 +1,6 @@
-pub mod base_material_normal_map;
 pub mod bindings;
 pub mod entry_points;
 pub mod skinned_mesh;
-pub mod skinning;
-pub mod vertex_color;
-pub mod vertex_normal;
-pub mod vertex_position;
-pub mod vertex_tangent;
-pub mod vertex_uv;
 
 use spirv_std::glam::{Mat3, Mat4, Vec3, Vec4};
 

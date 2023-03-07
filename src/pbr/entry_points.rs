@@ -5,13 +5,16 @@ use spirv_std::{
 };
 
 use crate::prelude::{
-    BaseColorTexture, BaseMaterialNormalMap, ClusterDebugVisualization, ClusterLightIndexLists,
-    ClusterOffsetsAndCounts, DirectionalShadowTextures, Dither, EmissiveTexture, Lights, Mesh,
-    MetallicRoughnessTexture, NormalMapTexture, OcclusionTexture, PbrInput, PointLights,
-    PointShadowTextures, Skinning, Tonemapper, VertexColor, VertexNormal, VertexPosition,
-    VertexTangent, VertexUv, View, STANDARD_MATERIAL_FLAGS_DOUBLE_SIDED_BIT,
-    STANDARD_MATERIAL_FLAGS_UNLIT_BIT,
+    BaseColorTexture, EmissiveTexture, Lights, Mesh, MetallicRoughnessTexture, NormalMapTexture,
+    OcclusionTexture, PbrInput, View, STANDARD_MATERIAL_FLAGS_BASE_COLOR_TEXTURE_BIT,
+    STANDARD_MATERIAL_FLAGS_DOUBLE_SIDED_BIT, STANDARD_MATERIAL_FLAGS_EMISSIVE_TEXTURE_BIT,
+    STANDARD_MATERIAL_FLAGS_FLIP_NORMAL_MAP_Y,
+    STANDARD_MATERIAL_FLAGS_METALLIC_ROUGHNESS_TEXTURE_BIT,
+    STANDARD_MATERIAL_FLAGS_OCCLUSION_TEXTURE_BIT,
+    STANDARD_MATERIAL_FLAGS_TWO_COMPONENT_NORMAL_MAP, STANDARD_MATERIAL_FLAGS_UNLIT_BIT,
 };
+
+use spirv_std::num_traits::Float;
 
 use super::BaseMaterial;
 
@@ -19,8 +22,6 @@ use super::BaseMaterial;
     parameters = {
         texture_format: texture | array,
         buffer_format: uniform | storage,
-        position: some | none,
-        normal: some | none,
         uv: some | none,
         tangent: some | none,
         color: some | none,
@@ -31,6 +32,8 @@ use super::BaseMaterial;
         cluster_debug: debug_z_slices | debug_cluster_light_complexity | debug_cluster_coherency | none
     },
     permutations = [
+        (array, uniform, some, some, some, some, some, some, some, debug_z_slices),
+        (array, uniform, none, none, none, none, none, none, none, none),
         file("../../entry_points.json", "pbr::entry_points"),
         env("BEVY_PBR_RUST_PBR_FRAGMENT_PERMUTATIONS", "pbr::entry_points")
     ]
@@ -86,24 +89,57 @@ pub fn fragment(
     cluster_offsets_and_counts: &crate::prelude::ClusterOffsetsAndCountsStorage,
 
     #[spirv(uniform, descriptor_set = 1, binding = 0)] material: &BaseMaterial,
-    #[spirv(descriptor_set = 1, binding = 1)] base_color_texture: &BaseColorTexture,
-    #[spirv(descriptor_set = 1, binding = 2)] base_color_sampler: &Sampler,
-    #[spirv(descriptor_set = 1, binding = 3)] emissive_texture: &EmissiveTexture,
-    #[spirv(descriptor_set = 1, binding = 4)] emissive_sampler: &Sampler,
-    #[spirv(descriptor_set = 1, binding = 5)] metallic_roughness_texture: &MetallicRoughnessTexture,
-    #[spirv(descriptor_set = 1, binding = 6)] metallic_roughness_sampler: &Sampler,
-    #[spirv(descriptor_set = 1, binding = 7)] occlusion_texture: &OcclusionTexture,
-    #[spirv(descriptor_set = 1, binding = 8)] occlusion_sampler: &Sampler,
-    #[spirv(descriptor_set = 1, binding = 9)] normal_map_texture: &NormalMapTexture,
-    #[spirv(descriptor_set = 1, binding = 10)] normal_map_sampler: &Sampler,
+
+    #[allow(unused_variables)]
+    #[spirv(descriptor_set = 1, binding = 1)]
+    base_color_texture: &BaseColorTexture,
+
+    #[allow(unused_variables)]
+    #[spirv(descriptor_set = 1, binding = 2)]
+    base_color_sampler: &Sampler,
+
+    #[allow(unused_variables)]
+    #[spirv(descriptor_set = 1, binding = 3)]
+    emissive_texture: &EmissiveTexture,
+
+    #[allow(unused_variables)]
+    #[spirv(descriptor_set = 1, binding = 4)]
+    emissive_sampler: &Sampler,
+
+    #[allow(unused_variables)]
+    #[spirv(descriptor_set = 1, binding = 5)]
+    metallic_roughness_texture: &MetallicRoughnessTexture,
+
+    #[allow(unused_variables)]
+    #[spirv(descriptor_set = 1, binding = 6)]
+    metallic_roughness_sampler: &Sampler,
+
+    #[allow(unused_variables)]
+    #[spirv(descriptor_set = 1, binding = 7)]
+    occlusion_texture: &OcclusionTexture,
+
+    #[allow(unused_variables)]
+    #[spirv(descriptor_set = 1, binding = 8)]
+    occlusion_sampler: &Sampler,
+
+    #[allow(unused_variables)]
+    #[spirv(descriptor_set = 1, binding = 9)]
+    normal_map_texture: &NormalMapTexture,
+
+    #[allow(unused_variables)]
+    #[spirv(descriptor_set = 1, binding = 10)]
+    normal_map_sampler: &Sampler,
 
     #[spirv(uniform, descriptor_set = 2, binding = 0)] mesh: &Mesh,
 
-    #[spirv(front_facing)] in_is_front: bool,
+    #[allow(unused_variables)]
+    #[spirv(front_facing)]
+    in_is_front: bool,
+
     #[spirv(position)] in_frag_coord: Vec4,
     in_world_position: Vec4,
     in_world_normal: Vec3,
-    in_uv: Vec2,
+    #[allow(unused_variables)] in_uv: Vec2,
     #[permutate(tangent = some)] in_tangent: Vec4,
     #[permutate(color = some)] in_color: Vec4,
     output_color: &mut Vec4,
@@ -133,51 +169,6 @@ pub fn fragment(
     #[permutate(buffer_format = storage)]
     type _ClusterOffsetsAndCounts = crate::prelude::ClusterOffsetsAndCountsStorage;
 
-    #[permutate(position = some)]
-    type _Position = Vec4;
-    #[permutate(position = none)]
-    type _Position = ();
-
-    #[permutate(normal = some)]
-    type _Normal = Vec3;
-    #[permutate(normal = none)]
-    type _Normal = ();
-
-    #[permutate(uv = some)]
-    type _Uv = Vec2;
-    #[permutate(uv = none)]
-    type _Uv = ();
-
-    #[permutate(tangent = some)]
-    type _Tangent = Vec4;
-    #[permutate(tangent = none)]
-    type _Tangent = ();
-
-    #[permutate(color = some)]
-    type _Color = Vec4;
-    #[permutate(color = none)]
-    type _Color = ();
-
-    #[permutate(normal_map = some)]
-    type _NormalMap = crate::prelude::StandardMaterialNormalMap;
-    #[permutate(normal_map = none)]
-    type _NormalMap = ();
-
-    #[permutate(skinned = some)]
-    type _Skinned = crate::prelude::SkinnedMesh;
-    #[permutate(skinned = none)]
-    type _Skinned = ();
-
-    #[permutate(tonemap = some)]
-    type _Tonemap = crate::prelude::TonemapInShader;
-    #[permutate(tonemap = none)]
-    type _Tonemap = ();
-
-    #[permutate(deband = some)]
-    type _Deband = crate::prelude::DebandDither;
-    #[permutate(deband = none)]
-    type _Deband = ();
-
     #[permutate(cluster_debug = debug_z_slices)]
     type _ClusterDebug = crate::prelude::DebugZSlices;
     #[permutate(cluster_debug = debug_cluster_light_complexity)]
@@ -187,132 +178,28 @@ pub fn fragment(
     #[permutate(cluster_debug = none)]
     type _ClusterDebug = ();
 
-    fragment_impl::<
-        _PointShadow,
-        _DirectionalShadow,
-        _PointLights,
-        _ClusterLightIndexLists,
-        _ClusterOffsetsAndCounts,
-        _Position,
-        _Normal,
-        _Uv,
-        _Tangent,
-        _Color,
-        _NormalMap,
-        _Skinned,
-        _Tonemap,
-        _Deband,
-        _ClusterDebug,
-    >(
-        view,
-        lights,
-        point_shadow_textures,
-        point_shadow_textures_sampler,
-        directional_shadow_textures,
-        directional_shadow_textures_sampler,
-        point_lights,
-        cluster_light_index_lists,
-        cluster_offsets_and_counts,
-        material,
-        base_color_texture,
-        base_color_sampler,
-        emissive_texture,
-        emissive_sampler,
-        metallic_roughness_texture,
-        metallic_roughness_sampler,
-        occlusion_texture,
-        occlusion_sampler,
-        normal_map_texture,
-        normal_map_sampler,
-        mesh,
-        in_is_front,
-        in_frag_coord,
-        #[permutate(position = some)]
-        &in_world_position,
-        #[permutate(position = none)]
-        &(),
-        #[permutate(normal = some)]
-        &in_world_normal,
-        #[permutate(normal = none)]
-        &(),
-        #[permutate(uv = some)]
-        &in_uv,
-        #[permutate(uv = none)]
-        &(),
-        #[permutate(tangent = some)]
-        &in_tangent,
-        #[permutate(tangent = none)]
-        &(),
-        #[permutate(color = some)]
-        &in_color,
-        #[permutate(color = none)]
-        &(),
-        output_color,
-    )
-}
+    let vertex_position = in_world_position;
+    let vertex_normal = in_world_normal;
 
-pub fn fragment_impl<
-    PS: PointShadowTextures,
-    DS: DirectionalShadowTextures,
-    PL: PointLights,
-    CL: ClusterLightIndexLists,
-    CO: ClusterOffsetsAndCounts,
-    VP: VertexPosition,
-    VN: VertexNormal,
-    VU: VertexUv,
-    VT: VertexTangent,
-    VC: VertexColor,
-    N: BaseMaterialNormalMap,
-    SM: Skinning,
-    TM: Tonemapper,
-    DT: Dither,
-    CD: ClusterDebugVisualization,
->(
-    view: &View,
-    lights: &Lights,
-    point_shadow_textures: &PS,
-    point_shadow_textures_sampler: &Sampler,
-    directional_shadow_textures: &DS,
-    directional_shadow_textures_sampler: &Sampler,
-    point_lights: &PL,
-    cluster_light_index_lists: &CL,
-    cluster_offsets_and_counts: &CO,
+    #[permutate(uv = some)]
+    let vertex_uv = &in_uv;
 
-    material: &BaseMaterial,
-    base_color_texture: &BaseColorTexture,
-    base_color_sampler: &Sampler,
-    emissive_texture: &EmissiveTexture,
-    emissive_sampler: &Sampler,
-    metallic_roughness_texture: &MetallicRoughnessTexture,
-    metallic_roughness_sampler: &Sampler,
-    occlusion_texture: &OcclusionTexture,
-    occlusion_sampler: &Sampler,
-    normal_map_texture: &NormalMapTexture,
-    normal_map_sampler: &Sampler,
+    #[permutate(color = some)]
+    let vertex_color = &in_color;
 
-    mesh: &Mesh,
+    #[permutate(color = some)]
+    let vertex_tangent = &in_tangent;
 
-    in_is_front: bool,
-    in_frag_coord: Vec4,
-
-    vertex_position: &VP,
-    vertex_normal: &VN,
-    vertex_uv: &VU,
-    vertex_tangent: &VT,
-    vertex_color: &VC,
-
-    output_color: &mut Vec4,
-) {
     *output_color = material.base.base_color;
 
-    *output_color = vertex_color.apply(*output_color);
+    #[permutate(color = some)]
+    *output_color *= *vertex_color;
 
-    vertex_uv.sample_base_color_texture(
-        base_color_texture,
-        base_color_sampler,
-        material,
-        output_color,
-    );
+    #[permutate(uv = some)]
+    if (material.base.flags & STANDARD_MATERIAL_FLAGS_BASE_COLOR_TEXTURE_BIT) != 0 {
+        *output_color =
+            *output_color * base_color_texture.sample::<f32, Vec4>(*base_color_sampler, *vertex_uv);
+    }
 
     // NOTE: Unlit bit not set means == 0 is true, so the true case is if lit
     if material.base.flags & STANDARD_MATERIAL_FLAGS_UNLIT_BIT == 0 {
@@ -326,80 +213,147 @@ pub fn fragment_impl<
         pbr_input.material.alpha_cutoff = material.base.alpha_cutoff;
 
         // TODO use .a for exposure compensation in HDR
-        let mut emissive = material.base.emissive;
+        let emissive = material.base.emissive;
 
-        vertex_uv.sample_emissive_texture(
-            emissive_texture,
-            emissive_sampler,
-            material,
-            &mut emissive,
-        );
+        #[permutate(uv = some)]
+        let emissive = if (material.base.flags & STANDARD_MATERIAL_FLAGS_EMISSIVE_TEXTURE_BIT) != 0
+        {
+            (emissive.truncate()
+                * emissive_texture
+                    .sample::<f32, Vec4>(*emissive_sampler, *vertex_uv)
+                    .truncate())
+            .extend(1.0)
+        } else {
+            emissive
+        };
 
         pbr_input.material.emissive = emissive;
 
+        #[allow(unused_mut)]
         let mut metallic = material.base.metallic;
+
+        #[allow(unused_mut)]
         let mut perceptual_roughness = material.base.perceptual_roughness;
 
-        vertex_uv.sample_metallic_roughness_texture(
-            metallic_roughness_texture,
-            metallic_roughness_sampler,
-            material,
-            &mut metallic,
-            &mut perceptual_roughness,
-        );
+        #[permutate(uv = some)]
+        if (material.base.flags & STANDARD_MATERIAL_FLAGS_METALLIC_ROUGHNESS_TEXTURE_BIT) != 0 {
+            let metallic_roughness = metallic_roughness_texture
+                .sample::<f32, Vec4>(*metallic_roughness_sampler, *vertex_uv);
+            // Sampling from GLTF standard channels for now
+            metallic = metallic * metallic_roughness.z;
+            perceptual_roughness = perceptual_roughness * metallic_roughness.y;
+        }
 
         pbr_input.material.metallic = metallic;
         pbr_input.material.perceptual_roughness = perceptual_roughness;
 
+        #[allow(unused_mut)]
         let mut occlusion: f32 = 1.0;
 
-        vertex_uv.sample_occlusion_texture(
-            occlusion_texture,
-            occlusion_sampler,
-            material,
-            &mut occlusion,
-        );
+        #[permutate(uv = some)]
+        if (material.base.flags & STANDARD_MATERIAL_FLAGS_OCCLUSION_TEXTURE_BIT) != 0 {
+            occlusion = occlusion_texture
+                .sample::<f32, Vec4>(*occlusion_sampler, *vertex_uv)
+                .x;
+        }
 
         pbr_input.occlusion = occlusion;
 
         pbr_input.frag_coord = in_frag_coord;
-        vertex_position.apply_pbr_position(&mut pbr_input);
-        vertex_normal.prepare_world_normal::<VT, N>(
-            (material.base.flags & STANDARD_MATERIAL_FLAGS_DOUBLE_SIDED_BIT) != 0,
-            in_is_front,
-            &mut pbr_input,
-        );
+        pbr_input.world_position = vertex_position;
+        pbr_input.world_normal = vertex_normal;
+
+        #[permutate(tangent = some)]
+        {
+            #[permutate(normal_map = some)]
+            {
+                // NOTE: When NOT using normal-mapping, if looking at the back face of a double-sided
+                // material, the normal needs to be inverted. This is a branchless version of that.
+                pbr_input.world_normal =
+                    (if !(material.base.flags & STANDARD_MATERIAL_FLAGS_DOUBLE_SIDED_BIT) != 0
+                        || in_is_front
+                    {
+                        1.0
+                    } else {
+                        0.0
+                    } * 2.0
+                        - 1.0)
+                        * pbr_input.world_normal;
+            }
+        }
 
         pbr_input.is_orthographic = view.projection.w_axis.w == 1.0;
 
-        let pn = pbr_input.world_normal;
-        pn.apply_pbr_input_n::<VU, VT, N>(
-            material.base.flags,
-            vertex_uv,
-            vertex_tangent,
-            normal_map_texture,
-            normal_map_sampler,
-            &mut pbr_input,
-        );
+        #[permutate(uv = some)]
+        {
+            #[permutate(tangent = some)]
+            {
+                #[permutate(normal_map = some)]
+                // NOTE: The mikktspace method of normal mapping explicitly requires that these NOT be
+                // normalized nor any Gram-Schmidt applied to ensure the vertex normal is orthogonal to the
+                // vertex tangent! Do not change this code unless you really know what you are doing.
+                // http://www.mikktspace.com/
+                let t: Vec3 = vertex_tangent.truncate();
+                let b: Vec3 = vertex_tangent.w * pbr_input.n.cross(t);
 
-        vertex_position.apply_pbr_v(view, &mut pbr_input);
+                // Nt is the tangent-space normal.
+                let mut nt = normal_map_texture
+                    .sample::<f32, Vec4>(*normal_map_sampler, *vertex_uv)
+                    .truncate();
+                if (material.base.flags & STANDARD_MATERIAL_FLAGS_TWO_COMPONENT_NORMAL_MAP) != 0 {
+                    // Only use the xy components and derive z for 2-component normal maps.
+                    nt = (nt.truncate() * 2.0 - 1.0).extend(0.0);
+                    nt.z = (1.0 - nt.x * nt.x - nt.y * nt.y).sqrt();
+                } else {
+                    nt = nt * 2.0 - 1.0;
+                }
+                // Normal maps authored for DirectX require flipping the y component
+                if (material.base.flags & STANDARD_MATERIAL_FLAGS_FLIP_NORMAL_MAP_Y) != 0 {
+                    nt.y = -nt.y;
+                }
+                // NOTE: The mikktspace method of normal mapping applies maps the tangent-space normal from
+                // the normal map texture in this way to be an EXACT inverse of how the normal map baker
+                // calculates the normal maps so there is no error introduced. Do not change this code
+                // unless you really know what you are doing.
+                // http://www.mikktspace.com/
+                pbr_input.n = nt.x * t + nt.y * b + nt.z * pbr_input.n;
+            }
 
-        *output_color = pbr_input.pbr::<PL, DS, PS, CL, CO, CD>(
-            view,
-            mesh,
-            lights,
-            point_lights,
-            cluster_light_index_lists,
-            cluster_offsets_and_counts,
-            directional_shadow_textures,
-            directional_shadow_textures_sampler,
-            point_shadow_textures,
-            point_shadow_textures_sampler,
-        );
+            pbr_input.n = pbr_input.world_normal.normalize();
+        }
+
+        pbr_input.v = view.calculate_view(vertex_position, pbr_input.is_orthographic);
+
+        *output_color = pbr_input
+            .pbr::<_PointLights, _DirectionalShadow, _PointShadow, _ClusterLightIndexLists, _ClusterOffsetsAndCounts, _ClusterDebug>(
+                view,
+                mesh,
+                lights,
+                point_lights,
+                cluster_light_index_lists,
+                cluster_offsets_and_counts,
+                directional_shadow_textures,
+                directional_shadow_textures_sampler,
+                point_shadow_textures,
+                point_shadow_textures_sampler,
+            );
     } else {
         *output_color = material.base.alpha_discard(*output_color);
     }
 
-    *output_color = TM::tonemap(*output_color);
-    *output_color = DT::dither(in_frag_coord, *output_color);
+    #[permutate(tonemap = some)]
+    *output_color =
+        crate::prelude::reinhard_luminance(output_color.truncate()).extend(output_color.w);
+
+    #[permutate(deband = some)]
+    *output_color = {
+        let mut output_rgb = output_color.truncate();
+        output_rgb = output_rgb.powf(1.0 / 2.2);
+        output_rgb =
+            output_rgb + crate::prelude::screen_space_dither(in_frag_coord.truncate().truncate());
+        // This conversion back to linear space is required because our output texture format is
+        // SRGB; the GPU will assume our output is linear and will apply an SRGB conversion.
+        output_rgb = output_rgb.powf(2.2);
+        output_rgb.extend(output_color.w)
+    };
 }
