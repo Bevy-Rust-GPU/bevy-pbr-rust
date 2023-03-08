@@ -122,6 +122,97 @@
 <a href="#122" id="122">122</a>
 <a href="#123" id="123">123</a>
 <a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
+<a href="#134" id="134">134</a>
+<a href="#135" id="135">135</a>
+<a href="#136" id="136">136</a>
+<a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
+<a href="#152" id="152">152</a>
+<a href="#153" id="153">153</a>
+<a href="#154" id="154">154</a>
+<a href="#155" id="155">155</a>
+<a href="#156" id="156">156</a>
+<a href="#157" id="157">157</a>
+<a href="#158" id="158">158</a>
+<a href="#159" id="159">159</a>
+<a href="#160" id="160">160</a>
+<a href="#161" id="161">161</a>
+<a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
+<a href="#174" id="174">174</a>
+<a href="#175" id="175">175</a>
+<a href="#176" id="176">176</a>
+<a href="#177" id="177">177</a>
+<a href="#178" id="178">178</a>
+<a href="#179" id="179">179</a>
+<a href="#180" id="180">180</a>
+<a href="#181" id="181">181</a>
+<a href="#182" id="182">182</a>
+<a href="#183" id="183">183</a>
+<a href="#184" id="184">184</a>
+<a href="#185" id="185">185</a>
+<a href="#186" id="186">186</a>
+<a href="#187" id="187">187</a>
+<a href="#188" id="188">188</a>
+<a href="#189" id="189">189</a>
+<a href="#190" id="190">190</a>
+<a href="#191" id="191">191</a>
+<a href="#192" id="192">192</a>
+<a href="#193" id="193">193</a>
+<a href="#194" id="194">194</a>
+<a href="#195" id="195">195</a>
+<a href="#196" id="196">196</a>
+<a href="#197" id="197">197</a>
+<a href="#198" id="198">198</a>
+<a href="#199" id="199">199</a>
+<a href="#200" id="200">200</a>
+<a href="#201" id="201">201</a>
+<a href="#202" id="202">202</a>
+<a href="#203" id="203">203</a>
+<a href="#204" id="204">204</a>
+<a href="#205" id="205">205</a>
+<a href="#206" id="206">206</a>
+<a href="#207" id="207">207</a>
+<a href="#208" id="208">208</a>
+<a href="#209" id="209">209</a>
+<a href="#210" id="210">210</a>
+<a href="#211" id="211">211</a>
+<a href="#212" id="212">212</a>
+<a href="#213" id="213">213</a>
+<a href="#214" id="214">214</a>
+<a href="#215" id="215">215</a>
 </pre><pre class="rust"><code><span class="kw">use </span>core::ops::{Add, Mul, Sub};
 
 <span class="kw">use </span>spirv_std::{
@@ -133,19 +224,19 @@
 <span class="attr">#[allow(unused_imports)]
 </span><span class="kw">use </span>spirv_std::num_traits::Float;
 
-<span class="kw">use </span>rust_gpu_bridge::prelude::NaturalLog;
+<span class="kw">use </span>rust_gpu_bridge::{hsv2rgb, mix::Mix, prelude::NaturalLog};
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::{DirectionalLight, DirectionalShadowTextures, View};
 
-<span class="attr">#[derive(Default, Copy, Clone, PartialEq)]
+<span class="attr">#[derive(Copy, Clone, PartialEq)]
 #[repr(C)]
-</span><span class="kw">pub struct </span>Lights {
+</span><span class="kw">pub struct </span>Lights&lt;<span class="kw">const </span>MAX_DIRECTIONAL_LIGHTS: usize, <span class="kw">const </span>MAX_CASCADES_PER_LIGHT: usize&gt; {
     <span class="comment">// NOTE: this array size must be kept in sync with the constants defined in bevy_pbr/src/render/light.rs
-    </span><span class="kw">pub </span>directional_lights: [DirectionalLight; <span class="number">10</span>],
+    </span><span class="kw">pub </span>directional_lights: [DirectionalLight&lt;MAX_CASCADES_PER_LIGHT&gt;; MAX_DIRECTIONAL_LIGHTS],
     <span class="kw">pub </span>ambient_color: Vec4,
     <span class="comment">// x/y/z dimensions and n_clusters in w
     </span><span class="kw">pub </span>cluster_dimensions: UVec4,
-    <span class="comment">// xy are vec2&lt;f32&gt;(cluster_dimensions.xy) / vec2&lt;f32&gt;(view.width, view.height)
+    <span class="comment">// xy are Vec2(cluster_dimensions.xy) / Vec2(view.width, view.height)
     //
     // For perspective projections:
     // z is cluster_dimensions.z / log(far / near)
@@ -158,26 +249,57 @@
     </span><span class="kw">pub </span>cluster_factors: Vec4,
     <span class="kw">pub </span>n_directional_lights: u32,
     <span class="kw">pub </span>spot_light_shadowmap_offset: i32,
+    <span class="kw">pub </span>environment_map_smallest_specular_mip_level: u32,
 }
 
-<span class="kw">impl </span>Lights {
-    <span class="kw">pub fn </span>fetch_directional_shadow&lt;DS: DirectionalShadowTextures&gt;(
+<span class="kw">impl</span>&lt;<span class="kw">const </span>MAX_DIRECTIONAL_LIGHTS: usize, <span class="kw">const </span>MAX_CASCADES_PER_LIGHT: usize&gt; Default
+    <span class="kw">for </span>Lights&lt;MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT&gt;
+{
+    <span class="kw">fn </span>default() -&gt; <span class="self">Self </span>{
+        Lights {
+            directional_lights: [Default::default(); MAX_DIRECTIONAL_LIGHTS],
+            ambient_color: Default::default(),
+            cluster_dimensions: Default::default(),
+            cluster_factors: Default::default(),
+            n_directional_lights: Default::default(),
+            spot_light_shadowmap_offset: Default::default(),
+            environment_map_smallest_specular_mip_level: Default::default(),
+        }
+    }
+}
+
+<span class="kw">impl</span>&lt;<span class="kw">const </span>MAX_DIRECTIONAL_LIGHTS: usize, <span class="kw">const </span>MAX_CASCADES_PER_LIGHT: usize&gt;
+    Lights&lt;MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT&gt;
+{
+    <span class="kw">pub fn </span>get_cascade_index(<span class="kw-2">&amp;</span><span class="self">self</span>, light_id: u32, view_z: f32) -&gt; u32 {
+        <span class="kw">let </span>light = <span class="kw-2">&amp;</span><span class="self">self</span>.directional_lights[light_id <span class="kw">as </span>usize];
+
+        <span class="kw">for </span>i <span class="kw">in </span><span class="number">0</span>..light.num_cascades {
+            <span class="kw">if </span>-view_z &lt; light.cascades[i <span class="kw">as </span>usize].far_bound {
+                <span class="kw">return </span>i;
+            }
+        }
+        <span class="kw">return </span>(<span class="kw-2">*</span>light).num_cascades;
+    }
+
+    <span class="kw">pub fn </span>sample_cascade&lt;DS: DirectionalShadowTextures&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         directional_shadow_textures: <span class="kw-2">&amp;</span>DS,
         directional_shadow_textures_sampler: <span class="kw-2">&amp;</span>Sampler,
         light_id: u32,
+        cascade_index: u32,
         frag_position: Vec4,
         surface_normal: Vec3,
     ) -&gt; f32 {
         <span class="kw">let </span>light = <span class="kw-2">&amp;</span><span class="self">self</span>.directional_lights[light_id <span class="kw">as </span>usize];
-
+        <span class="kw">let </span>cascade = <span class="kw-2">&amp;</span>(<span class="kw-2">*</span>light).cascades[cascade_index <span class="kw">as </span>usize];
         <span class="comment">// The normal bias is scaled to the texel size.
-        </span><span class="kw">let </span>normal_offset = light.shadow_normal_bias * surface_normal;
-        <span class="kw">let </span>depth_offset = light.shadow_depth_bias * light.direction_to_light;
+        </span><span class="kw">let </span>normal_offset = (<span class="kw-2">*</span>light).shadow_normal_bias * cascade.texel_size * surface_normal;
+        <span class="kw">let </span>depth_offset = (<span class="kw-2">*</span>light).shadow_depth_bias * light.direction_to_light;
         <span class="kw">let </span>offset_position =
             (frag_position.truncate() + normal_offset + depth_offset).extend(frag_position.w);
 
-        <span class="kw">let </span>offset_position_clip = light.view_projection * offset_position;
+        <span class="kw">let </span>offset_position_clip = cascade.view_projection * offset_position;
         <span class="kw">if </span>offset_position_clip.w &lt;= <span class="number">0.0 </span>{
             <span class="kw">return </span><span class="number">1.0</span>;
         }
@@ -205,9 +327,69 @@
             directional_shadow_textures_sampler,
             light_local,
             depth,
-            light_id,
+            light.depth_texture_base_index.add(cascade_index),
             <span class="number">0</span>,
         )
+    }
+
+    <span class="kw">pub fn </span>fetch_directional_shadow&lt;DS: DirectionalShadowTextures&gt;(
+        <span class="kw-2">&amp;</span><span class="self">self</span>,
+        directional_shadow_textures: <span class="kw-2">&amp;</span>DS,
+        directional_shadow_textures_sampler: <span class="kw-2">&amp;</span>Sampler,
+        light_id: u32,
+        frag_position: Vec4,
+        surface_normal: Vec3,
+        view_z: f32,
+    ) -&gt; f32 {
+        <span class="kw">let </span>light = <span class="kw-2">&amp;</span><span class="self">self</span>.directional_lights[light_id <span class="kw">as </span>usize];
+        <span class="kw">let </span>cascade_index = <span class="self">self</span>.get_cascade_index(light_id, view_z);
+
+        <span class="kw">if </span>cascade_index &gt;= (<span class="kw-2">*</span>light).num_cascades {
+            <span class="kw">return </span><span class="number">1.0</span>;
+        }
+
+        <span class="kw">let </span><span class="kw-2">mut </span>shadow = <span class="self">self</span>.sample_cascade(
+            directional_shadow_textures,
+            directional_shadow_textures_sampler,
+            light_id,
+            cascade_index,
+            frag_position,
+            surface_normal,
+        );
+
+        <span class="comment">// Blend with the next cascade, if there is one.
+        </span><span class="kw">let </span>next_cascade_index = cascade_index.add(<span class="number">1</span>);
+        <span class="kw">if </span>next_cascade_index &lt; (<span class="kw-2">*</span>light).num_cascades {
+            <span class="kw">let </span>this_far_bound = (<span class="kw-2">*</span>light).cascades[cascade_index <span class="kw">as </span>usize].far_bound;
+            <span class="kw">let </span>next_near_bound = (<span class="number">1.0 </span>- (<span class="kw-2">*</span>light).cascades_overlap_proportion) * this_far_bound;
+            <span class="kw">if </span>-view_z &gt;= next_near_bound {
+                <span class="kw">let </span>next_shadow = <span class="self">self</span>.sample_cascade(
+                    directional_shadow_textures,
+                    directional_shadow_textures_sampler,
+                    light_id,
+                    next_cascade_index,
+                    frag_position,
+                    surface_normal,
+                );
+                shadow = shadow.mix(
+                    next_shadow,
+                    (-view_z - next_near_bound) / (this_far_bound - next_near_bound),
+                );
+            }
+        }
+        <span class="kw">return </span>shadow;
+    }
+
+    <span class="kw">pub fn </span>cascade_debug_visualization(<span class="kw-2">&amp;</span><span class="self">self</span>, output_color: Vec3, light_id: u32, view_z: f32) -&gt; Vec3 {
+        <span class="kw">let </span>overlay_alpha = <span class="number">0.95</span>;
+        <span class="kw">let </span>cascade_index = <span class="self">self</span>.get_cascade_index(light_id, view_z);
+        <span class="kw">let </span>cascade_color = hsv2rgb(
+            cascade_index <span class="kw">as </span>f32 / (MAX_CASCADES_PER_LIGHT + <span class="number">1</span>) <span class="kw">as </span>f32,
+            <span class="number">1.0</span>,
+            <span class="number">0.5</span>,
+        );
+
+        (<span class="number">1.0 </span>- overlay_alpha) * output_color + overlay_alpha * cascade_color
     }
 
     <span class="comment">// NOTE: Keep in sync with bevy_pbr/src/light.rs
@@ -219,7 +401,7 @@
             <span class="comment">// NOTE: had to use -view_z to make it positive else log(negative) is nan
             </span>((-view_z).natural_log() * <span class="self">self</span>.cluster_factors.z - <span class="self">self</span>.cluster_factors.w + <span class="number">1.0</span>) <span class="kw">as </span>u32
         };
-        <span class="comment">// NOTE: We use min as we may limit the far z plane used for clustering to be closeer than
+        <span class="comment">// NOTE: We use min as we may limit the far z plane used for clustering to be closer than
         // the furthest thing being drawn. This means that we need to limit to the maximum cluster.
         </span>unsigned_min(z_slice, <span class="self">self</span>.cluster_dimensions.z.sub(<span class="number">1</span>))
     }

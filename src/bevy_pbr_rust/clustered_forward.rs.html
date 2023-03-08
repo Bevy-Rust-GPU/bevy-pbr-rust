@@ -116,6 +116,21 @@
 <a href="#116" id="116">116</a>
 <a href="#117" id="117">117</a>
 <a href="#118" id="118">118</a>
+<a href="#119" id="119">119</a>
+<a href="#120" id="120">120</a>
+<a href="#121" id="121">121</a>
+<a href="#122" id="122">122</a>
+<a href="#123" id="123">123</a>
+<a href="#124" id="124">124</a>
+<a href="#125" id="125">125</a>
+<a href="#126" id="126">126</a>
+<a href="#127" id="127">127</a>
+<a href="#128" id="128">128</a>
+<a href="#129" id="129">129</a>
+<a href="#130" id="130">130</a>
+<a href="#131" id="131">131</a>
+<a href="#132" id="132">132</a>
+<a href="#133" id="133">133</a>
 </pre><pre class="rust"><code><span class="kw">use </span>core::ops::Add;
 
 <span class="kw">use </span><span class="kw">crate</span>::glam::{UVec3, Vec4};
@@ -131,8 +146,11 @@
 
 <span class="comment">// Cluster allocation debug (using &#39;over&#39; alpha blending)
 </span><span class="kw">pub trait </span>ClusterDebugVisualization {
-    <span class="kw">fn </span>cluster_debug_visualization(
-        lights: <span class="kw-2">&amp;</span>Lights,
+    <span class="kw">fn </span>cluster_debug_visualization&lt;
+        <span class="kw">const </span>MAX_DIRECTIONAL_LIGHTS: usize,
+        <span class="kw">const </span>MAX_CASCADES_PER_LIGHT: usize,
+    &gt;(
+        lights: <span class="kw-2">&amp;</span>Lights&lt;MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT&gt;,
         output_color: Vec4,
         view_z: f32,
         is_orthographic: bool,
@@ -142,8 +160,11 @@
 }
 
 <span class="kw">impl </span>ClusterDebugVisualization <span class="kw">for </span>() {
-    <span class="kw">fn </span>cluster_debug_visualization(
-        <span class="kw">_</span>: <span class="kw-2">&amp;</span>Lights,
+    <span class="kw">fn </span>cluster_debug_visualization&lt;
+        <span class="kw">const </span>MAX_DIRECTIONAL_LIGHTS: usize,
+        <span class="kw">const </span>MAX_CASCADES_PER_LIGHT: usize,
+    &gt;(
+        <span class="kw">_</span>: <span class="kw-2">&amp;</span>Lights&lt;MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT&gt;,
         output_color: Vec4,
         <span class="kw">_</span>: f32,
         <span class="kw">_</span>: bool,
@@ -157,8 +178,11 @@
 <span class="kw">pub enum </span>DebugZSlices {}
 
 <span class="kw">impl </span>ClusterDebugVisualization <span class="kw">for </span>DebugZSlices {
-    <span class="kw">fn </span>cluster_debug_visualization(
-        lights: <span class="kw-2">&amp;</span>Lights,
+    <span class="kw">fn </span>cluster_debug_visualization&lt;
+        <span class="kw">const </span>MAX_DIRECTIONAL_LIGHTS: usize,
+        <span class="kw">const </span>MAX_CASCADES_PER_LIGHT: usize,
+    &gt;(
+        lights: <span class="kw-2">&amp;</span>Lights&lt;MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT&gt;,
         output_color: Vec4,
         view_z: f32,
         is_orthographic: bool,
@@ -187,8 +211,11 @@
 <span class="kw">pub enum </span>DebugClusterLightComplexity {}
 
 <span class="kw">impl </span>ClusterDebugVisualization <span class="kw">for </span>DebugClusterLightComplexity {
-    <span class="kw">fn </span>cluster_debug_visualization(
-        <span class="kw">_</span>: <span class="kw-2">&amp;</span>Lights,
+    <span class="kw">fn </span>cluster_debug_visualization&lt;
+        <span class="kw">const </span>MAX_DIRECTIONAL_LIGHTS: usize,
+        <span class="kw">const </span>MAX_CASCADES_PER_LIGHT: usize,
+    &gt;(
+        <span class="kw">_</span>: <span class="kw-2">&amp;</span>Lights&lt;MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT&gt;,
         <span class="kw-2">mut </span>output_color: Vec4,
         <span class="kw">_</span>: f32,
         <span class="kw">_</span>: bool,
@@ -218,8 +245,11 @@
 <span class="kw">pub enum </span>DebugClusterCoherency {}
 
 <span class="kw">impl </span>ClusterDebugVisualization <span class="kw">for </span>DebugClusterCoherency {
-    <span class="kw">fn </span>cluster_debug_visualization(
-        <span class="kw">_</span>: <span class="kw-2">&amp;</span>Lights,
+    <span class="kw">fn </span>cluster_debug_visualization&lt;
+        <span class="kw">const </span>MAX_DIRECTIONAL_LIGHTS: usize,
+        <span class="kw">const </span>MAX_CASCADES_PER_LIGHT: usize,
+    &gt;(
+        <span class="kw">_</span>: <span class="kw-2">&amp;</span>Lights&lt;MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT&gt;,
         output_color: Vec4,
         <span class="kw">_</span>: f32,
         <span class="kw">_</span>: bool,

@@ -135,12 +135,26 @@
 <a href="#135" id="135">135</a>
 <a href="#136" id="136">136</a>
 <a href="#137" id="137">137</a>
+<a href="#138" id="138">138</a>
+<a href="#139" id="139">139</a>
+<a href="#140" id="140">140</a>
+<a href="#141" id="141">141</a>
+<a href="#142" id="142">142</a>
+<a href="#143" id="143">143</a>
+<a href="#144" id="144">144</a>
+<a href="#145" id="145">145</a>
+<a href="#146" id="146">146</a>
+<a href="#147" id="147">147</a>
+<a href="#148" id="148">148</a>
+<a href="#149" id="149">149</a>
+<a href="#150" id="150">150</a>
+<a href="#151" id="151">151</a>
 </pre><pre class="rust"><code><span class="kw">use </span>spirv_std::glam::{Vec3, Vec4};
 
 <span class="attr">#[allow(unused_imports)]
 </span><span class="kw">use </span>spirv_std::num_traits::Float;
 
-<span class="kw">use </span>rust_gpu_bridge::saturate::Saturate;
+<span class="kw">use </span>rust_gpu_bridge::{glam::Vec2, saturate::Saturate};
 
 <span class="kw">use </span><span class="kw">super</span>::<span class="kw">super</span>::prelude::{fd_burley, get_distance_attenuation, specular};
 
@@ -166,12 +180,14 @@
     <span class="kw">pub fn </span>point_light(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         world_position: Vec3,
+        light_id: u32,
         roughness: f32,
         n_dot_v: f32,
         n: Vec3,
         v: Vec3,
         r: Vec3,
         f0: Vec3,
+        f_ab: Vec2,
         diffuse_color: Vec3,
     ) -&gt; Vec3 {
         <span class="kw">let </span>light_to_frag = <span class="self">self</span>.position_radius.truncate() - world_position;
@@ -199,7 +215,17 @@
         <span class="kw">let </span>noh: f32 = n.dot(h).saturate();
         <span class="kw">let </span>loh: f32 = l.dot(h).saturate();
 
-        <span class="kw">let </span>specular_light = specular(f0, roughness, h, n_dot_v, nol, noh, loh, specular_intensity);
+        <span class="kw">let </span>specular_light = specular(
+            f0,
+            roughness,
+            h,
+            n_dot_v,
+            nol,
+            noh,
+            loh,
+            specular_intensity,
+            f_ab,
+        );
 
         <span class="comment">// Diffuse.
         // Comes after specular since its NoL is used in the lighting equation.
@@ -222,9 +248,7 @@
         // I = Φ / 4 π
         // The derivation of this can be seen here: https://google.github.io/filament/Filament.html#mjx-eqn-pointLightLuminousPower
 
-        // NOTE: light.color.rgb is premultiplied with light.intensity / 4 π (which would be the luminous intensity) on the CPU
-
-        // TODO compensate for energy loss https://google.github.io/filament/Filament.html#materialsystem/improvingthebrdfs/energylossinspecularreflectance
+        // NOTE: (*light).color.rgb is premultiplied with (*light).intensity / 4 π (which would be the luminous intensity) on the CPU
 
         </span>(diffuse + specular_light)
             * <span class="self">self</span>.color_inverse_square_range.truncate()
@@ -234,29 +258,33 @@
     <span class="kw">pub fn </span>spot_light(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
         world_position: Vec3,
+        light_id: u32,
         roughness: f32,
         n_dot_v: f32,
         n: Vec3,
         v: Vec3,
         r: Vec3,
         f0: Vec3,
+        f_ab: Vec2,
         diffuse_color: Vec3,
     ) -&gt; Vec3 {
         <span class="comment">// reuse the point light calculations
         </span><span class="kw">let </span>point_light = <span class="self">self</span>.point_light(
             world_position,
+            light_id,
             roughness,
             n_dot_v,
             n,
             v,
             r,
             f0,
+            f_ab,
             diffuse_color,
         );
 
         <span class="comment">// reconstruct spot dir from x/z and y-direction flag
         </span><span class="kw">let </span><span class="kw-2">mut </span>spot_dir = Vec3::new(<span class="self">self</span>.light_custom_data.x, <span class="number">0.0</span>, <span class="self">self</span>.light_custom_data.y);
-        spot_dir.y = (<span class="number">0.0_f32</span>.max(<span class="number">1.0 </span>- spot_dir.x * spot_dir.x - spot_dir.z * spot_dir.z)).sqrt();
+        spot_dir.y = (<span class="number">0.0</span>.max(<span class="number">1.0 </span>- spot_dir.x * spot_dir.x - spot_dir.z * spot_dir.z)).sqrt();
         <span class="kw">if </span>(<span class="self">self</span>.flags &amp; POINT_LIGHT_FLAGS_SPOT_LIGHT_Y_NEGATIVE) != <span class="number">0 </span>{
             spot_dir.y = -spot_dir.y;
         }

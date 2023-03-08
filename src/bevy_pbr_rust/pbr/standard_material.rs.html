@@ -59,6 +59,12 @@
 <a href="#59" id="59">59</a>
 <a href="#60" id="60">60</a>
 <a href="#61" id="61">61</a>
+<a href="#62" id="62">62</a>
+<a href="#63" id="63">63</a>
+<a href="#64" id="64">64</a>
+<a href="#65" id="65">65</a>
+<a href="#66" id="66">66</a>
+<a href="#67" id="67">67</a>
 </pre><pre class="rust"><code><span class="kw">use </span>spirv_std::{arch::kill, glam::Vec4};
 
 <span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_BASE_COLOR_TEXTURE_BIT: u32 = <span class="number">1</span>;
@@ -67,13 +73,20 @@
 <span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_OCCLUSION_TEXTURE_BIT: u32 = <span class="number">8</span>;
 <span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_DOUBLE_SIDED_BIT: u32 = <span class="number">16</span>;
 <span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_UNLIT_BIT: u32 = <span class="number">32</span>;
-<span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_ALPHA_MODE_OPAQUE: u32 = <span class="number">64</span>;
-<span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_ALPHA_MODE_MASK: u32 = <span class="number">128</span>;
-<span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_ALPHA_MODE_BLEND: u32 = <span class="number">256</span>;
-<span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_TWO_COMPONENT_NORMAL_MAP: u32 = <span class="number">512</span>;
-<span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_FLIP_NORMAL_MAP_Y: u32 = <span class="number">1024</span>;
+<span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_TWO_COMPONENT_NORMAL_MAP: u32 = <span class="number">64</span>;
+<span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_FLIP_NORMAL_MAP_Y: u32 = <span class="number">128</span>;
+<span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_FOG_ENABLED_BIT: u32 = <span class="number">256</span>;
+<span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_ALPHA_MODE_RESERVED_BITS: u32 = <span class="number">3758096384</span>; <span class="comment">// (0b111u32 &lt;&lt; 29)
+</span><span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_ALPHA_MODE_OPAQUE: u32 = <span class="number">0</span>; <span class="comment">// (0u32 &lt;&lt; 29)
+</span><span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_ALPHA_MODE_MASK: u32 = <span class="number">536870912</span>; <span class="comment">// (1u32 &lt;&lt; 29)
+</span><span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_ALPHA_MODE_BLEND: u32 = <span class="number">1073741824</span>; <span class="comment">// (2u32 &lt;&lt; 29)
+</span><span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_ALPHA_MODE_PREMULTIPLIED: u32 = <span class="number">1610612736</span>; <span class="comment">// (3u32 &lt;&lt; 29)
+</span><span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_ALPHA_MODE_ADD: u32 = <span class="number">2147483648</span>; <span class="comment">// (4u32 &lt;&lt; 29)
+</span><span class="kw">pub const </span>STANDARD_MATERIAL_FLAGS_ALPHA_MODE_MULTIPLY: u32 = <span class="number">2684354560</span>; <span class="comment">// (5u32 &lt;&lt; 29)
+                                                                         // ↑ To calculate/verify the values above, use the following playground:
+                                                                         // https://play.rust-lang.org/?version=stable&amp;mode=debug&amp;edition=2021&amp;gist=7792f8dd6fc6a8d4d0b6b1776898a7f4
 
-<span class="attr">#[repr(C)]
+</span><span class="attr">#[repr(C)]
 </span><span class="kw">pub struct </span>StandardMaterial {
     <span class="kw">pub </span>base_color: Vec4,
     <span class="kw">pub </span>emissive: Vec4,
@@ -102,22 +115,21 @@
 <span class="kw">impl </span>StandardMaterial {
     <span class="kw">pub fn </span>alpha_discard(<span class="kw-2">&amp;</span><span class="self">self</span>, output_color: Vec4) -&gt; Vec4 {
         <span class="kw">let </span><span class="kw-2">mut </span>color = output_color;
-
-        <span class="kw">if </span>(<span class="self">self</span>.flags &amp; STANDARD_MATERIAL_FLAGS_ALPHA_MODE_OPAQUE) != <span class="number">0 </span>{
+        <span class="kw">let </span>alpha_mode = <span class="self">self</span>.flags &amp; STANDARD_MATERIAL_FLAGS_ALPHA_MODE_RESERVED_BITS;
+        <span class="kw">if </span>alpha_mode == STANDARD_MATERIAL_FLAGS_ALPHA_MODE_OPAQUE {
             <span class="comment">// NOTE: If rendering as opaque, alpha should be ignored so set to 1.0
             </span>color.w = <span class="number">1.0</span>;
-        } <span class="kw">else if </span>(<span class="self">self</span>.flags &amp; STANDARD_MATERIAL_FLAGS_ALPHA_MODE_MASK) != <span class="number">0 </span>{
+        } <span class="kw">else if </span>alpha_mode == STANDARD_MATERIAL_FLAGS_ALPHA_MODE_MASK {
             <span class="kw">if </span>color.w &gt;= <span class="self">self</span>.alpha_cutoff {
                 <span class="comment">// NOTE: If rendering as masked alpha and &gt;= the cutoff, render as fully opaque
                 </span>color.w = <span class="number">1.0</span>;
             } <span class="kw">else </span>{
-                <span class="comment">// NOTE: output_color.a &lt; input.material.alpha_cutoff should not is not rendered
+                <span class="comment">// NOTE: output_color.a &lt; in.material.alpha_cutoff should not is not rendered
                 // NOTE: This and any other discards mean that early-z testing cannot be done!
                 </span>kill();
             }
         }
-
-        color
+        <span class="kw">return </span>color;
     }
 }
 </code></pre></div>

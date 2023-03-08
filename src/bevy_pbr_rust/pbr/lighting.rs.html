@@ -160,6 +160,17 @@
 <a href="#160" id="160">160</a>
 <a href="#161" id="161">161</a>
 <a href="#162" id="162">162</a>
+<a href="#163" id="163">163</a>
+<a href="#164" id="164">164</a>
+<a href="#165" id="165">165</a>
+<a href="#166" id="166">166</a>
+<a href="#167" id="167">167</a>
+<a href="#168" id="168">168</a>
+<a href="#169" id="169">169</a>
+<a href="#170" id="170">170</a>
+<a href="#171" id="171">171</a>
+<a href="#172" id="172">172</a>
+<a href="#173" id="173">173</a>
 </pre><pre class="rust"><code><span class="attr">#[allow(unused_imports)]
 </span><span class="kw">use </span>spirv_std::{
     glam::{Vec2, Vec3, Vec4},
@@ -276,12 +287,18 @@
     noh: f32,
     loh: f32,
     specular_intensity: f32,
+    f_ab: Vec2,
 ) -&gt; Vec3 {
     <span class="kw">let </span>d = d_ggx(roughness, noh, h);
     <span class="kw">let </span>v = v_smith_ggx_correlated(roughness, nov, nol);
     <span class="kw">let </span>f = fresnel(f0, loh);
 
-    (specular_intensity * d * v) * f
+    <span class="kw">let </span><span class="kw-2">mut </span>fr = (specular_intensity * d * v) * f;
+
+    <span class="comment">// Multiscattering approximation: https://google.github.io/filament/Filament.html#listing_energycompensationimpl
+    </span>fr <span class="kw-2">*</span>= <span class="number">1.0 </span>+ f0 * (<span class="number">1.0 </span>/ f_ab.x - <span class="number">1.0</span>);
+
+    <span class="kw">return </span>fr;
 }
 
 <span class="comment">// Diffuse BRDF
@@ -305,14 +322,19 @@
     light_scatter * view_scatter * (<span class="number">1.0 </span>/ &lt;f32 <span class="kw">as </span>FloatConst&gt;::PI())
 }
 
-<span class="comment">// From https://www.unrealengine.com/en-US/blog/physically-based-shading-on-mobile
-</span><span class="kw">pub fn </span>env_brdf_approx(f0: Vec3, perceptual_roughness: f32, nov: f32) -&gt; Vec3 {
+<span class="comment">// Scale/bias approximation
+// https://www.unrealengine.com/en-US/blog/physically-based-shading-on-mobile
+// TODO: Use a LUT (more accurate)
+</span><span class="kw">pub fn </span>f_ab(perceptual_roughness: f32, nov: f32) -&gt; Vec2 {
     <span class="kw">let </span>c0 = Vec4::new(-<span class="number">1.0</span>, -<span class="number">0.0275</span>, -<span class="number">0.572</span>, <span class="number">0.022</span>);
     <span class="kw">let </span>c1 = Vec4::new(<span class="number">1.0</span>, <span class="number">0.0425</span>, <span class="number">1.04</span>, -<span class="number">0.04</span>);
     <span class="kw">let </span>r = perceptual_roughness * c0 + c1;
     <span class="kw">let </span>a004 = (r.x * r.x).min((-<span class="number">9.28 </span>* nov).exp2()) * r.x + r.y;
-    <span class="kw">let </span>ab = Vec2::new(-<span class="number">1.04</span>, <span class="number">1.04</span>) * a004 + Vec2::new(r.z, r.w);
-    f0 * ab.x + ab.y
+    Vec2::new(-<span class="number">1.04</span>, <span class="number">1.04</span>) * a004 + Vec2::new(r.z, r.w)
+}
+
+<span class="kw">pub fn </span>env_brdf_approx(f0: Vec3, f_ab: Vec2) -&gt; Vec3 {
+    <span class="kw">return </span>f0 * f_ab.x + f_ab.y;
 }
 
 <span class="kw">pub fn </span>perceptual_roughness_to_roughness(perceptual_roughness: f32) -&gt; f32 {
