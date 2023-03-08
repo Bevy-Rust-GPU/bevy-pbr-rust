@@ -3,7 +3,7 @@ use spirv_std::glam::{Vec3, Vec4};
 #[allow(unused_imports)]
 use spirv_std::num_traits::Float;
 
-use rust_gpu_bridge::saturate::Saturate;
+use rust_gpu_bridge::{glam::Vec2, saturate::Saturate};
 
 use super::super::prelude::{fd_burley, get_distance_attenuation, specular};
 
@@ -29,12 +29,14 @@ impl PointLight {
     pub fn point_light(
         &self,
         world_position: Vec3,
+        light_id: u32,
         roughness: f32,
         n_dot_v: f32,
         n: Vec3,
         v: Vec3,
         r: Vec3,
         f0: Vec3,
+        f_ab: Vec2,
         diffuse_color: Vec3,
     ) -> Vec3 {
         let light_to_frag = self.position_radius.truncate() - world_position;
@@ -62,7 +64,17 @@ impl PointLight {
         let noh: f32 = n.dot(h).saturate();
         let loh: f32 = l.dot(h).saturate();
 
-        let specular_light = specular(f0, roughness, h, n_dot_v, nol, noh, loh, specular_intensity);
+        let specular_light = specular(
+            f0,
+            roughness,
+            h,
+            n_dot_v,
+            nol,
+            noh,
+            loh,
+            specular_intensity,
+            f_ab,
+        );
 
         // Diffuse.
         // Comes after specular since its NoL is used in the lighting equation.
@@ -85,9 +97,7 @@ impl PointLight {
         // I = Φ / 4 π
         // The derivation of this can be seen here: https://google.github.io/filament/Filament.html#mjx-eqn-pointLightLuminousPower
 
-        // NOTE: light.color.rgb is premultiplied with light.intensity / 4 π (which would be the luminous intensity) on the CPU
-
-        // TODO compensate for energy loss https://google.github.io/filament/Filament.html#materialsystem/improvingthebrdfs/energylossinspecularreflectance
+        // NOTE: (*light).color.rgb is premultiplied with (*light).intensity / 4 π (which would be the luminous intensity) on the CPU
 
         (diffuse + specular_light)
             * self.color_inverse_square_range.truncate()
@@ -97,29 +107,33 @@ impl PointLight {
     pub fn spot_light(
         &self,
         world_position: Vec3,
+        light_id: u32,
         roughness: f32,
         n_dot_v: f32,
         n: Vec3,
         v: Vec3,
         r: Vec3,
         f0: Vec3,
+        f_ab: Vec2,
         diffuse_color: Vec3,
     ) -> Vec3 {
         // reuse the point light calculations
         let point_light = self.point_light(
             world_position,
+            light_id,
             roughness,
             n_dot_v,
             n,
             v,
             r,
             f0,
+            f_ab,
             diffuse_color,
         );
 
         // reconstruct spot dir from x/z and y-direction flag
         let mut spot_dir = Vec3::new(self.light_custom_data.x, 0.0, self.light_custom_data.y);
-        spot_dir.y = (0.0_f32.max(1.0 - spot_dir.x * spot_dir.x - spot_dir.z * spot_dir.z)).sqrt();
+        spot_dir.y = (0.0.max(1.0 - spot_dir.x * spot_dir.x - spot_dir.z * spot_dir.z)).sqrt();
         if (self.flags & POINT_LIGHT_FLAGS_SPOT_LIGHT_Y_NEGATIVE) != 0 {
             spot_dir.y = -spot_dir.y;
         }

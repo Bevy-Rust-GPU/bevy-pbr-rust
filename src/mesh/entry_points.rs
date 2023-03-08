@@ -20,9 +20,25 @@ use super::mesh_position_local_to_world;
         color: some | none,
         skinned: some | none
     },
+    constants = {},
     permutations = [
-        (none, none, none),
-        (some, some, some),
+        {
+            parameters = [
+                none,
+                none,
+                none
+            ],
+            constants = {}
+        },
+        {
+            parameters = [
+                some,
+                some,
+                some
+            ],
+            constants = {
+            }
+        },
         file("../../entry_points.json", "mesh::entry_points"),
         env("BEVY_PBR_RUST_MESH_VERTEX_PERMUTATIONS", "mesh::entry_points")
     ]

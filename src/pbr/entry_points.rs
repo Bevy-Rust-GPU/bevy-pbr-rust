@@ -4,14 +4,19 @@ use spirv_std::{
     spirv, Sampler,
 };
 
-use crate::prelude::{
-    BaseColorTexture, EmissiveTexture, Lights, Mesh, MetallicRoughnessTexture, NormalMapTexture,
-    OcclusionTexture, PbrInput, View, STANDARD_MATERIAL_FLAGS_BASE_COLOR_TEXTURE_BIT,
-    STANDARD_MATERIAL_FLAGS_DOUBLE_SIDED_BIT, STANDARD_MATERIAL_FLAGS_EMISSIVE_TEXTURE_BIT,
-    STANDARD_MATERIAL_FLAGS_FLIP_NORMAL_MAP_Y,
-    STANDARD_MATERIAL_FLAGS_METALLIC_ROUGHNESS_TEXTURE_BIT,
-    STANDARD_MATERIAL_FLAGS_OCCLUSION_TEXTURE_BIT,
-    STANDARD_MATERIAL_FLAGS_TWO_COMPONENT_NORMAL_MAP, STANDARD_MATERIAL_FLAGS_UNLIT_BIT,
+use crate::{
+    fog::{Fog, FOG_MODE_OFF},
+    pbr::{apply_fog, PremultiplyAlpha},
+    prelude::{
+        powsafe, BaseColorTexture, EmissiveTexture, Lights, Mesh, MetallicRoughnessTexture,
+        NormalMapTexture, OcclusionTexture, PbrInput, TextureCube, View,
+        STANDARD_MATERIAL_FLAGS_BASE_COLOR_TEXTURE_BIT, STANDARD_MATERIAL_FLAGS_DOUBLE_SIDED_BIT,
+        STANDARD_MATERIAL_FLAGS_EMISSIVE_TEXTURE_BIT, STANDARD_MATERIAL_FLAGS_FLIP_NORMAL_MAP_Y,
+        STANDARD_MATERIAL_FLAGS_FOG_ENABLED_BIT,
+        STANDARD_MATERIAL_FLAGS_METALLIC_ROUGHNESS_TEXTURE_BIT,
+        STANDARD_MATERIAL_FLAGS_OCCLUSION_TEXTURE_BIT,
+        STANDARD_MATERIAL_FLAGS_TWO_COMPONENT_NORMAL_MAP, STANDARD_MATERIAL_FLAGS_UNLIT_BIT,
+    },
 };
 
 use spirv_std::num_traits::Float;
@@ -29,11 +34,37 @@ use super::BaseMaterial;
         skinned: some | none,
         tonemap: some | none,
         deband: some | none,
-        cluster_debug: debug_z_slices | debug_cluster_light_complexity | debug_cluster_coherency | none
+        blend_mode: multiply | blend_premultiplied_alpha | none,
+        environment_map: some | none,
+        premultiply_alpha: some | none,
+        cluster_debug: debug_z_slices | debug_cluster_light_complexity | debug_cluster_coherency | none,
+        directional_light_shadow_map_debug: some | none
+    },
+    constants = {
+        MAX_DIRECTIONAL_LIGHTS: u32,
+        MAX_CASCADES_PER_LIGHT: u32
     },
     permutations = [
-        (array, uniform, some, some, some, some, some, some, some, debug_z_slices),
-        (array, uniform, none, none, none, none, none, none, none, none),
+        // All on
+        {
+            parameters = [
+                array, uniform, some, some, some, some, some, some, some, multiply, some, some, debug_z_slices, some
+            ],
+            constants = {
+                MAX_DIRECTIONAL_LIGHTS = 10,
+                MAX_CASCADES_PER_LIGHT = 4
+            }
+        },
+        // All off
+        {
+            parameters = [
+                array, uniform, none, none, none, none, none, none, none, blend_premultiplied_alpha, none, none, none, none
+            ],
+            constants = {
+                MAX_DIRECTIONAL_LIGHTS = 10,
+                MAX_CASCADES_PER_LIGHT = 4
+            }
+        },
         file("../../entry_points.json", "pbr::entry_points"),
         env("BEVY_PBR_RUST_PBR_FRAGMENT_PERMUTATIONS", "pbr::entry_points")
     ]
@@ -42,7 +73,10 @@ use super::BaseMaterial;
 #[allow(non_snake_case)]
 pub fn fragment(
     #[spirv(uniform, descriptor_set = 0, binding = 0)] view: &View,
-    #[spirv(uniform, descriptor_set = 0, binding = 1)] lights: &Lights,
+    #[spirv(uniform, descriptor_set = 0, binding = 1)] lights: &Lights<
+        permutate!(MAX_DIRECTIONAL_LIGHTS),
+        permutate!(MAX_CASCADES_PER_LIGHT),
+    >,
 
     #[permutate(texture_format = texture)]
     #[spirv(descriptor_set = 0, binding = 2)]
@@ -87,6 +121,12 @@ pub fn fragment(
     #[permutate(buffer_format = storage)]
     #[spirv(storage_buffer, descriptor_set = 0, binding = 8)]
     cluster_offsets_and_counts: &crate::prelude::ClusterOffsetsAndCountsStorage,
+
+    #[spirv(uniform, descriptor_set = 0, binding = 10)] fog: &Fog,
+
+    #[spirv(descriptor_set = 0, binding = 11)] environment_map_diffuse: &TextureCube,
+    #[spirv(descriptor_set = 0, binding = 12)] environment_map_specular: &TextureCube,
+    #[spirv(descriptor_set = 0, binding = 13)] environment_map_sampler: &Sampler,
 
     #[spirv(uniform, descriptor_set = 1, binding = 0)] material: &BaseMaterial,
 
@@ -169,6 +209,18 @@ pub fn fragment(
     #[permutate(buffer_format = storage)]
     type _ClusterOffsetsAndCounts = crate::prelude::ClusterOffsetsAndCountsStorage;
 
+    #[permutate(blend_mode = multiply)]
+    type _PremultiplyAlpha = crate::prelude::Multiply;
+    #[permutate(blend_mode = blend_premultiplied_alpha)]
+    type _PremultiplyAlpha = crate::prelude::BlendPremultipliedAlpha;
+    #[permutate(blend_mode = none)]
+    type _PremultiplyAlpha = ();
+
+    #[permutate(environment_map = some)]
+    type _EnvironmentMap = ();
+    #[permutate(environment_map = none)]
+    type _EnvironmentMap = ();
+
     #[permutate(cluster_debug = debug_z_slices)]
     type _ClusterDebug = crate::prelude::DebugZSlices;
     #[permutate(cluster_debug = debug_cluster_light_complexity)]
@@ -177,6 +229,11 @@ pub fn fragment(
     type _ClusterDebug = crate::prelude::DebugClusterCoherency;
     #[permutate(cluster_debug = none)]
     type _ClusterDebug = ();
+
+    #[permutate(directional_light_shadow_map_debug = some)]
+    type _DirectionalLightShadowMapDebug = crate::prelude::DebugCascades;
+    #[permutate(directional_light_shadow_map_debug = none)]
+    type _DirectionalLightShadowMapDebug = ();
 
     let vertex_position = in_world_position;
     let vertex_normal = in_world_normal;
@@ -323,9 +380,23 @@ pub fn fragment(
         }
 
         pbr_input.v = view.calculate_view(vertex_position, pbr_input.is_orthographic);
+        pbr_input.occlusion = occlusion;
+
+        pbr_input.flags = mesh.flags;
 
         *output_color = pbr_input
-            .pbr::<_PointLights, _DirectionalShadow, _PointShadow, _ClusterLightIndexLists, _ClusterOffsetsAndCounts, _ClusterDebug>(
+            .pbr::<
+                permutate!(MAX_DIRECTIONAL_LIGHTS),
+                permutate!(MAX_CASCADES_PER_LIGHT),
+                _PointLights,
+                _DirectionalShadow,
+                _PointShadow,
+                _ClusterLightIndexLists,
+                _ClusterOffsetsAndCounts,
+                _EnvironmentMap,
+                _ClusterDebug,
+                _DirectionalLightShadowMapDebug
+            >(
                 view,
                 mesh,
                 lights,
@@ -336,9 +407,25 @@ pub fn fragment(
                 directional_shadow_textures_sampler,
                 point_shadow_textures,
                 point_shadow_textures_sampler,
+                environment_map_diffuse,
+                environment_map_specular,
+                environment_map_sampler,
             );
     } else {
         *output_color = material.base.alpha_discard(*output_color);
+    }
+
+    // fog
+    if fog.mode != FOG_MODE_OFF
+        && (material.base.flags & STANDARD_MATERIAL_FLAGS_FOG_ENABLED_BIT) != 0
+    {
+        *output_color = apply_fog(
+            fog,
+            lights,
+            *output_color,
+            in_world_position.truncate(),
+            view.world_position,
+        )
     }
 
     #[permutate(tonemap = some)]
@@ -348,12 +435,15 @@ pub fn fragment(
     #[permutate(deband = some)]
     *output_color = {
         let mut output_rgb = output_color.truncate();
-        output_rgb = output_rgb.powf(1.0 / 2.2);
+        output_rgb = powsafe(output_rgb, 1.0 / 2.2);
         output_rgb =
             output_rgb + crate::prelude::screen_space_dither(in_frag_coord.truncate().truncate());
         // This conversion back to linear space is required because our output texture format is
         // SRGB; the GPU will assume our output is linear and will apply an SRGB conversion.
-        output_rgb = output_rgb.powf(2.2);
+        output_rgb = powsafe(output_rgb, 2.2);
         output_rgb.extend(output_color.w)
     };
+
+    #[permutate(premultiply_alpha = some)]
+    *output_color = _PremultiplyAlpha::premultiply_alpha(material.base.flags, *output_color);
 }

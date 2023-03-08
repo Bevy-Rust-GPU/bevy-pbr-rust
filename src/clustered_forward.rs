@@ -13,8 +13,11 @@ pub const CLUSTER_COUNT_SIZE: u32 = 9;
 
 // Cluster allocation debug (using 'over' alpha blending)
 pub trait ClusterDebugVisualization {
-    fn cluster_debug_visualization(
-        lights: &Lights,
+    fn cluster_debug_visualization<
+        const MAX_DIRECTIONAL_LIGHTS: usize,
+        const MAX_CASCADES_PER_LIGHT: usize,
+    >(
+        lights: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
         output_color: Vec4,
         view_z: f32,
         is_orthographic: bool,
@@ -24,8 +27,11 @@ pub trait ClusterDebugVisualization {
 }
 
 impl ClusterDebugVisualization for () {
-    fn cluster_debug_visualization(
-        _: &Lights,
+    fn cluster_debug_visualization<
+        const MAX_DIRECTIONAL_LIGHTS: usize,
+        const MAX_CASCADES_PER_LIGHT: usize,
+    >(
+        _: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
         output_color: Vec4,
         _: f32,
         _: bool,
@@ -39,8 +45,11 @@ impl ClusterDebugVisualization for () {
 pub enum DebugZSlices {}
 
 impl ClusterDebugVisualization for DebugZSlices {
-    fn cluster_debug_visualization(
-        lights: &Lights,
+    fn cluster_debug_visualization<
+        const MAX_DIRECTIONAL_LIGHTS: usize,
+        const MAX_CASCADES_PER_LIGHT: usize,
+    >(
+        lights: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
         output_color: Vec4,
         view_z: f32,
         is_orthographic: bool,
@@ -69,8 +78,11 @@ impl ClusterDebugVisualization for DebugZSlices {
 pub enum DebugClusterLightComplexity {}
 
 impl ClusterDebugVisualization for DebugClusterLightComplexity {
-    fn cluster_debug_visualization(
-        _: &Lights,
+    fn cluster_debug_visualization<
+        const MAX_DIRECTIONAL_LIGHTS: usize,
+        const MAX_CASCADES_PER_LIGHT: usize,
+    >(
+        _: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
         mut output_color: Vec4,
         _: f32,
         _: bool,
@@ -100,8 +112,11 @@ impl ClusterDebugVisualization for DebugClusterLightComplexity {
 pub enum DebugClusterCoherency {}
 
 impl ClusterDebugVisualization for DebugClusterCoherency {
-    fn cluster_debug_visualization(
-        _: &Lights,
+    fn cluster_debug_visualization<
+        const MAX_DIRECTIONAL_LIGHTS: usize,
+        const MAX_CASCADES_PER_LIGHT: usize,
+    >(
+        _: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
         output_color: Vec4,
         _: f32,
         _: bool,

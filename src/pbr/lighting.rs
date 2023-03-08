@@ -114,12 +114,18 @@ pub fn specular(
     noh: f32,
     loh: f32,
     specular_intensity: f32,
+    f_ab: Vec2,
 ) -> Vec3 {
     let d = d_ggx(roughness, noh, h);
     let v = v_smith_ggx_correlated(roughness, nov, nol);
     let f = fresnel(f0, loh);
 
-    (specular_intensity * d * v) * f
+    let mut fr = (specular_intensity * d * v) * f;
+
+    // Multiscattering approximation: https://google.github.io/filament/Filament.html#listing_energycompensationimpl
+    fr *= 1.0 + f0 * (1.0 / f_ab.x - 1.0);
+
+    return fr;
 }
 
 // Diffuse BRDF
@@ -143,14 +149,19 @@ pub fn fd_burley(roughness: f32, nov: f32, nol: f32, loh: f32) -> f32 {
     light_scatter * view_scatter * (1.0 / <f32 as FloatConst>::PI())
 }
 
-// From https://www.unrealengine.com/en-US/blog/physically-based-shading-on-mobile
-pub fn env_brdf_approx(f0: Vec3, perceptual_roughness: f32, nov: f32) -> Vec3 {
+// Scale/bias approximation
+// https://www.unrealengine.com/en-US/blog/physically-based-shading-on-mobile
+// TODO: Use a LUT (more accurate)
+pub fn f_ab(perceptual_roughness: f32, nov: f32) -> Vec2 {
     let c0 = Vec4::new(-1.0, -0.0275, -0.572, 0.022);
     let c1 = Vec4::new(1.0, 0.0425, 1.04, -0.04);
     let r = perceptual_roughness * c0 + c1;
     let a004 = (r.x * r.x).min((-9.28 * nov).exp2()) * r.x + r.y;
-    let ab = Vec2::new(-1.04, 1.04) * a004 + Vec2::new(r.z, r.w);
-    f0 * ab.x + ab.y
+    Vec2::new(-1.04, 1.04) * a004 + Vec2::new(r.z, r.w)
+}
+
+pub fn env_brdf_approx(f0: Vec3, f_ab: Vec2) -> Vec3 {
+    return f0 * f_ab.x + f_ab.y;
 }
 
 pub fn perceptual_roughness_to_roughness(perceptual_roughness: f32) -> f32 {

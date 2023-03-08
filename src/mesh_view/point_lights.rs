@@ -68,9 +68,13 @@ pub trait PointLights {
         )
     }
 
-    fn fetch_spot_shadow<DS: DirectionalShadowTextures>(
+    fn fetch_spot_shadow<
+        const MAX_DIRECTIONAL_LIGHTS: usize,
+        const MAX_CASCADES_PER_LIGHT: usize,
+        DS: DirectionalShadowTextures,
+    >(
         &self,
-        lights: &Lights,
+        lights: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
         directional_shadow_textures: &DS,
         directional_shadow_textures_sampler: &Sampler,
         light_id: u32,
