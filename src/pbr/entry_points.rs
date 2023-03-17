@@ -255,7 +255,7 @@ pub fn fragment(
     #[permutate(uv = some)]
     if (material.base.flags & STANDARD_MATERIAL_FLAGS_BASE_COLOR_TEXTURE_BIT) != 0 {
         *output_color =
-            *output_color * base_color_texture.sample::<f32, Vec4>(*base_color_sampler, *vertex_uv);
+            *output_color * base_color_texture.sample::<f32>(*base_color_sampler, *vertex_uv);
     }
 
     // NOTE: Unlit bit not set means == 0 is true, so the true case is if lit
@@ -277,7 +277,7 @@ pub fn fragment(
         {
             (emissive.truncate()
                 * emissive_texture
-                    .sample::<f32, Vec4>(*emissive_sampler, *vertex_uv)
+                    .sample::<f32>(*emissive_sampler, *vertex_uv)
                     .truncate())
             .extend(1.0)
         } else {
@@ -294,8 +294,8 @@ pub fn fragment(
 
         #[permutate(uv = some)]
         if (material.base.flags & STANDARD_MATERIAL_FLAGS_METALLIC_ROUGHNESS_TEXTURE_BIT) != 0 {
-            let metallic_roughness = metallic_roughness_texture
-                .sample::<f32, Vec4>(*metallic_roughness_sampler, *vertex_uv);
+            let metallic_roughness =
+                metallic_roughness_texture.sample::<f32>(*metallic_roughness_sampler, *vertex_uv);
             // Sampling from GLTF standard channels for now
             metallic = metallic * metallic_roughness.z;
             perceptual_roughness = perceptual_roughness * metallic_roughness.y;
@@ -310,7 +310,7 @@ pub fn fragment(
         #[permutate(uv = some)]
         if (material.base.flags & STANDARD_MATERIAL_FLAGS_OCCLUSION_TEXTURE_BIT) != 0 {
             occlusion = occlusion_texture
-                .sample::<f32, Vec4>(*occlusion_sampler, *vertex_uv)
+                .sample::<f32>(*occlusion_sampler, *vertex_uv)
                 .x;
         }
 
@@ -355,7 +355,7 @@ pub fn fragment(
 
                 // Nt is the tangent-space normal.
                 let mut nt = normal_map_texture
-                    .sample::<f32, Vec4>(*normal_map_sampler, *vertex_uv)
+                    .sample::<f32>(*normal_map_sampler, *vertex_uv)
                     .truncate();
                 if (material.base.flags & STANDARD_MATERIAL_FLAGS_TWO_COMPONENT_NORMAL_MAP) != 0 {
                     // Only use the xy components and derive z for 2-component normal maps.

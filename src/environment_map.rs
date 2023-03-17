@@ -78,10 +78,10 @@ impl EnvironmentMap for EnvironmentMapLight {
         let radiance_level =
             perceptual_roughness * (lights.environment_map_smallest_specular_mip_level) as f32;
         let irradiance = environment_map_diffuse
-            .sample::<f32, Vec4>(*environment_map_sampler, n)
+            .sample::<f32>(*environment_map_sampler, n)
             .truncate();
         let radiance = environment_map_specular
-            .sample_by_lod::<f32, Vec4>(*environment_map_sampler, r, radiance_level)
+            .sample_by_lod::<f32>(*environment_map_sampler, r, radiance_level)
             .truncate();
 
         // Multiscattering approximation: https://www.jcgt.org/published/0008/01/03/paper.pdf

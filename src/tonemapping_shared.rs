@@ -22,7 +22,7 @@ pub enum TonemapMethodAgx {}
 impl SampleCurrentLut for TonemapMethodAgx {
     fn sample_current_lut(dt_lut_texture: &Texture3d, dt_lut_sampler: &Sampler, p: Vec3) -> Vec3 {
         dt_lut_texture
-            .sample_by_lod::<f32, Vec4>(*dt_lut_sampler, p, 0.0)
+            .sample_by_lod::<f32>(*dt_lut_sampler, p, 0.0)
             .truncate()
     }
 }
@@ -32,7 +32,7 @@ pub enum TonemapMethodTonyMcMapFace {}
 impl SampleCurrentLut for TonemapMethodTonyMcMapFace {
     fn sample_current_lut(dt_lut_texture: &Texture3d, dt_lut_sampler: &Sampler, p: Vec3) -> Vec3 {
         dt_lut_texture
-            .sample_by_lod::<f32, Vec4>(*dt_lut_sampler, p, 0.0)
+            .sample_by_lod::<f32>(*dt_lut_sampler, p, 0.0)
             .truncate()
     }
 }
@@ -42,7 +42,7 @@ pub enum TonemapMethodBlenderFilmic {}
 impl SampleCurrentLut for TonemapMethodBlenderFilmic {
     fn sample_current_lut(dt_lut_texture: &Texture3d, dt_lut_sampler: &Sampler, p: Vec3) -> Vec3 {
         dt_lut_texture
-            .sample_by_lod::<f32, Vec4>(*dt_lut_sampler, p, 0.0)
+            .sample_by_lod::<f32>(*dt_lut_sampler, p, 0.0)
             .truncate()
     }
 }

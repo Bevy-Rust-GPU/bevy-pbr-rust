@@ -56,11 +56,7 @@ impl Mesh {
         // Unreal Engine, Godot, and more all use the mikktspace method. Do not change this code
         // unless you really know what you are doing.
         // http://www.mikktspace.com/
-        (Mat3 {
-            x_axis: model.x_axis.truncate(),
-            y_axis: model.y_axis.truncate(),
-            z_axis: model.z_axis.truncate(),
-        } * vertex_tangent.truncate())
+        (Mat3::from_mat4(model) * vertex_tangent.truncate())
         .normalize()
         .extend(
             // NOTE: Multiplying by the sign of the determinant of the 3x3 model matrix accounts for
