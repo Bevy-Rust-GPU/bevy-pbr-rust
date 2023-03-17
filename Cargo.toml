@@ -10,4 +10,4 @@ crate_type = ["dylib", "rlib"]
 bitflags = "2.0.1"
 spirv-std = "0.6.0"
 permutate-macro = { git = "https://github.com/Bevy-Rust-GPU/permutate-macro", tag = "v0.4.0" }
-rust-gpu-bridge = { git = "https://github.com/Bevy-Rust-GPU/rust-gpu-bridge", branch = "master", features = ["spirv-std"] }
+rust-gpu-bridge = { git = "https://github.com/Bevy-Rust-GPU/rust-gpu-bridge", tag = "v0.4.0", features = ["spirv-std"] }
