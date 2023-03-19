@@ -79,12 +79,12 @@
 <span class="kw">pub type </span>TextureDepthCubeArray =
     <span class="macro">Image!</span>(cube, <span class="kw">type </span>= f32, sampled = <span class="bool-val">true</span>, depth = <span class="bool-val">true</span>, arrayed = <span class="bool-val">true</span>);
 
-<span class="kw">pub type </span>TextureDepth2d = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32, sampled = <span class="bool-val">true</span>, depth = <span class="bool-val">true</span>);
+<span class="kw">pub type </span>TextureDepth2d = <span class="macro">Image!</span>(<span class="number">2D</span>, format = r32f, sampled = <span class="bool-val">false</span>, depth = <span class="bool-val">true</span>, arrayed = <span class="bool-val">false</span>, multisampled = <span class="bool-val">false</span>);
 <span class="kw">pub type </span>TextureDepth2dArray = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32, sampled = <span class="bool-val">true</span>, depth = <span class="bool-val">true</span>, arrayed = <span class="bool-val">true</span>);
 
 <span class="kw">pub type </span>TextureMultisampled2d = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32, sampled = <span class="bool-val">true</span>, multisampled = <span class="bool-val">true</span>);
 <span class="kw">pub type </span>TextureDepthMultisampled2d =
-    <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32, sampled = <span class="bool-val">true</span>, multisampled = <span class="bool-val">true</span>, depth = <span class="bool-val">true</span>);
+    <span class="macro">Image!</span>(<span class="kw">type </span>= f32, <span class="number">2D</span>, depth = <span class="bool-val">true</span>, arrayed = <span class="bool-val">true</span>, multisampled = <span class="bool-val">true</span>, sampled = <span class="bool-val">false</span>);
 
 <span class="kw">pub trait </span>DepthPrepassTexture {}
 

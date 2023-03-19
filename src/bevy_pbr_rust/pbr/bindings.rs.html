@@ -28,11 +28,11 @@
 
 <span class="kw">use </span><span class="kw">crate</span>::prelude::StandardMaterial;
 
-<span class="kw">pub type </span>BaseColorTexture = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32);
-<span class="kw">pub type </span>EmissiveTexture = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32);
-<span class="kw">pub type </span>MetallicRoughnessTexture = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32);
-<span class="kw">pub type </span>OcclusionTexture = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32);
-<span class="kw">pub type </span>NormalMapTexture = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32);
+<span class="kw">pub type </span>BaseColorTexture = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32, sampled = <span class="bool-val">true</span>);
+<span class="kw">pub type </span>EmissiveTexture = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32, sampled = <span class="bool-val">true</span>);
+<span class="kw">pub type </span>MetallicRoughnessTexture = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32, sampled = <span class="bool-val">true</span>);
+<span class="kw">pub type </span>OcclusionTexture = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32, sampled = <span class="bool-val">true</span>);
+<span class="kw">pub type </span>NormalMapTexture = <span class="macro">Image!</span>(<span class="number">2D</span>, <span class="kw">type </span>= f32, sampled = <span class="bool-val">true</span>);
 
 <span class="attr">#[allow(unused_variables)]
 #[spirv(fragment)]
