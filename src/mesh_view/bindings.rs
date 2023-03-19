@@ -15,12 +15,12 @@ pub type TextureDepthCube = Image!(cube, type = f32, sampled = true, depth = tru
 pub type TextureDepthCubeArray =
     Image!(cube, type = f32, sampled = true, depth = true, arrayed = true);
 
-pub type TextureDepth2d = Image!(2D, type = f32, sampled = true, depth = true);
+pub type TextureDepth2d = Image!(2D, format = r32f, sampled = false, depth = true, arrayed = false, multisampled = false);
 pub type TextureDepth2dArray = Image!(2D, type = f32, sampled = true, depth = true, arrayed = true);
 
 pub type TextureMultisampled2d = Image!(2D, type = f32, sampled = true, multisampled = true);
 pub type TextureDepthMultisampled2d =
-    Image!(2D, type = f32, sampled = true, multisampled = true, depth = true);
+    Image!(type = f32, 2D, depth = true, arrayed = true, multisampled = true, sampled = false);
 
 pub trait DepthPrepassTexture {}
 

@@ -109,7 +109,6 @@ pub fn vertex(
 #[spirv(fragment)]
 #[allow(unused_variables)]
 pub fn fragment(
-    #[spirv(position)] in_clip_position: Vec4,
     in_world_position: Vec4,
     in_world_normal: Vec3,
     in_uv: Vec2,

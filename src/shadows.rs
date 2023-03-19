@@ -14,7 +14,7 @@ pub trait DirectionalShadowTextures {
     ) -> f32;
 }
 
-pub type DirectionalShadowTexture = Image!(2D, type = f32, depth = true);
+pub type DirectionalShadowTexture = Image!(2D, type = f32, depth = true, sampled = true);
 
 impl DirectionalShadowTextures for DirectionalShadowTexture {
     fn sample_depth_reference(
@@ -29,7 +29,7 @@ impl DirectionalShadowTextures for DirectionalShadowTexture {
     }
 }
 
-pub type DirectionalShadowTextureArray = Image!(2D, type = f32, depth = true, arrayed = true);
+pub type DirectionalShadowTextureArray = Image!(2D, type = f32, depth = true, arrayed = true, sampled = true);
 
 impl DirectionalShadowTextures for DirectionalShadowTextureArray {
     fn sample_depth_reference(
@@ -59,7 +59,7 @@ pub trait PointShadowTextures {
     ) -> f32;
 }
 
-pub type PointShadowTexture = Image!(cube, type = f32, depth = true);
+pub type PointShadowTexture = Image!(cube, type = f32, depth = true, sampled = true);
 
 impl PointShadowTextures for PointShadowTexture {
     fn sample_depth_reference(&self, sampler: &Sampler, frag_ls: Vec3, depth: f32, _: u32) -> f32 {
@@ -67,7 +67,7 @@ impl PointShadowTextures for PointShadowTexture {
     }
 }
 
-pub type PointShadowTextureArray = Image!(cube, type = f32, depth = true, arrayed = true);
+pub type PointShadowTextureArray = Image!(cube, type = f32, depth = true, arrayed = true, sampled = true);
 
 impl PointShadowTextures for PointShadowTextureArray {
     fn sample_depth_reference(

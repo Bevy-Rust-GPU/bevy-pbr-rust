@@ -2,11 +2,11 @@ use spirv_std::{spirv, Image, Sampler};
 
 use crate::prelude::StandardMaterial;
 
-pub type BaseColorTexture = Image!(2D, type = f32);
-pub type EmissiveTexture = Image!(2D, type = f32);
-pub type MetallicRoughnessTexture = Image!(2D, type = f32);
-pub type OcclusionTexture = Image!(2D, type = f32);
-pub type NormalMapTexture = Image!(2D, type = f32);
+pub type BaseColorTexture = Image!(2D, type = f32, sampled = true);
+pub type EmissiveTexture = Image!(2D, type = f32, sampled = true);
+pub type MetallicRoughnessTexture = Image!(2D, type = f32, sampled = true);
+pub type OcclusionTexture = Image!(2D, type = f32, sampled = true);
+pub type NormalMapTexture = Image!(2D, type = f32, sampled = true);
 
 #[allow(unused_variables)]
 #[spirv(fragment)]

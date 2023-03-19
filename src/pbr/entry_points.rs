@@ -176,7 +176,7 @@ pub fn fragment(
     #[spirv(front_facing)]
     in_is_front: bool,
 
-    #[spirv(position)] in_frag_coord: Vec4,
+    #[spirv(frag_coord)] in_frag_coord: Vec4,
     in_world_position: Vec4,
     in_world_normal: Vec3,
     #[allow(unused_variables)] in_uv: Vec2,
