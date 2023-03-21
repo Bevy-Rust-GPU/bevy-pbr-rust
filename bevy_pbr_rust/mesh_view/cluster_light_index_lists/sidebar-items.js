@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ClusterLightIndexListsStorage",""],["ClusterLightIndexListsUniform",""]],"trait":[["ClusterLightIndexLists",""]]};
+window.SIDEBAR_ITEMS = {"trait":[["ClusterLightIndexLists",""]],"type":[["ClusterLightIndexListsStorage",""],["ClusterLightIndexListsUniform",""]]};

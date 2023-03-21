@@ -32,16 +32,7 @@
 <a href="#32" id="32">32</a>
 <a href="#33" id="33">33</a>
 <a href="#34" id="34">34</a>
-<a href="#35" id="35">35</a>
-<a href="#36" id="36">36</a>
-<a href="#37" id="37">37</a>
-<a href="#38" id="38">38</a>
-<a href="#39" id="39">39</a>
-<a href="#40" id="40">40</a>
-<a href="#41" id="41">41</a>
-<a href="#42" id="42">42</a>
-<a href="#43" id="43">43</a>
-</pre><pre class="rust"><code><span class="kw">use </span>core::ops::Mul;
+</pre><pre class="rust"><code><span class="kw">use </span>core::ops::{Index, Mul};
 
 <span class="kw">use </span>spirv_std::glam::UVec4;
 
@@ -49,18 +40,13 @@
     <span class="kw">fn </span>get_light_id(<span class="kw-2">&amp;</span><span class="self">self</span>, index: u32) -&gt; u32;
 }
 
-<span class="attr">#[derive(Copy, Clone, PartialEq)]
-#[repr(C)]
-</span><span class="kw">pub struct </span>ClusterLightIndexListsUniform {
-    <span class="comment">// each u32 contains 4 u8 indices into the PointLights array
-    </span><span class="kw">pub </span>data: [UVec4; <span class="number">1024</span>],
-}
+<span class="kw">pub type </span>ClusterLightIndexListsUniform&lt;<span class="lifetime">&#39;a</span>&gt; = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[UVec4; <span class="number">1024</span>];
 
-<span class="kw">impl </span>ClusterLightIndexLists <span class="kw">for </span>ClusterLightIndexListsUniform {
+<span class="kw">impl </span>ClusterLightIndexLists <span class="kw">for </span>ClusterLightIndexListsUniform&lt;<span class="lifetime">&#39;_</span>&gt; {
     <span class="kw">fn </span>get_light_id(<span class="kw-2">&amp;</span><span class="self">self</span>, index: u32) -&gt; u32 {
         <span class="comment">// The index is correct but in cluster_light_index_lists we pack 4 u8s into a u32
         // This means the index into cluster_light_index_lists is index / 4
-        </span><span class="kw">let </span>v = <span class="self">self</span>.data[(index &gt;&gt; <span class="number">4</span>) <span class="kw">as </span>usize];
+        </span><span class="kw">let </span>v = <span class="self">self</span>[(index &gt;&gt; <span class="number">4</span>) <span class="kw">as </span>usize];
         <span class="kw">let </span>indices = <span class="kw">match </span>((index &gt;&gt; <span class="number">2</span>) &amp; ((<span class="number">1 </span>&lt;&lt; <span class="number">2</span>) - <span class="number">1</span>)) <span class="kw">as </span>usize {
             <span class="number">0 </span>=&gt; v.x,
             <span class="number">1 </span>=&gt; v.y,
@@ -73,16 +59,12 @@
     }
 }
 
-<span class="attr">#[repr(C)]
-</span><span class="kw">pub struct </span>ClusterLightIndexListsStorage {
-    <span class="kw">pub </span>data: spirv_std::RuntimeArray&lt;u32&gt;,
-}
+<span class="kw">pub type </span>ClusterLightIndexListsStorage&lt;<span class="lifetime">&#39;a</span>&gt; = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[u32];
 
-<span class="kw">impl </span>ClusterLightIndexLists <span class="kw">for </span>ClusterLightIndexListsStorage {
+<span class="kw">impl </span>ClusterLightIndexLists <span class="kw">for </span>ClusterLightIndexListsStorage&lt;<span class="lifetime">&#39;_</span>&gt; {
     <span class="kw">fn </span>get_light_id(<span class="kw-2">&amp;</span><span class="self">self</span>, index: u32) -&gt; u32 {
-        <span class="kw">unsafe </span>{ <span class="kw-2">*</span><span class="self">self</span>.data.index(index <span class="kw">as </span>usize) }
+        <span class="kw-2">*</span><span class="kw">unsafe </span>{ <span class="self">self</span>.index(index <span class="kw">as </span>usize) }
     }
 }
-
 </code></pre></div>
 </section></main><div id="rustdoc-vars" data-root-path="../../../" data-static-root-path="../../../static.files/" data-current-crate="bevy_pbr_rust" data-themes="" data-resource-suffix="" data-rustdoc-version="1.68.0-nightly (5ce39f42b 2023-01-20)" data-search-js="search-98d53477a794af0b.js" data-settings-js="settings-c3c521c753752a1a.js" data-settings-css="settings-ab1d4ae2ec52020e.css" ></div></body></html>

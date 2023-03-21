@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["ClusterOffsetsAndCountsStorage",""],["ClusterOffsetsAndCountsUniform",""]],"trait":[["ClusterOffsetsAndCounts",""]]};
+window.SIDEBAR_ITEMS = {"trait":[["ClusterOffsetsAndCounts",""]],"type":[["ClusterOffsetsAndCountsStorage",""],["ClusterOffsetsAndCountsUniform",""]]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["PointLightsStorage",""],["PointLightsUniform",""]],"trait":[["PointLights",""]]};
+window.SIDEBAR_ITEMS = {"trait":[["PointLights",""]],"type":[["PointLightsStorage",""],["PointLightsUniform",""]]};

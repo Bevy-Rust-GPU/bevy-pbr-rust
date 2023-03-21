@@ -158,12 +158,9 @@
 <a href="#158" id="158">158</a>
 <a href="#159" id="159">159</a>
 <a href="#160" id="160">160</a>
-<a href="#161" id="161">161</a>
-<a href="#162" id="162">162</a>
-<a href="#163" id="163">163</a>
-<a href="#164" id="164">164</a>
-<a href="#165" id="165">165</a>
-</pre><pre class="rust"><code><span class="kw">use </span>spirv_std::{
+</pre><pre class="rust"><code><span class="kw">use </span>core::ops::Index;
+
+<span class="kw">use </span>spirv_std::{
     glam::{Mat3, Vec2, Vec3, Vec4},
     Sampler,
 };
@@ -177,7 +174,7 @@
 </span><span class="kw">use </span>spirv_std::num_traits::Float;
 
 <span class="kw">pub trait </span>PointLights {
-    <span class="kw">fn </span>get_point_light(<span class="kw-2">&amp;</span><span class="self">self</span>, light_id: u32) -&gt; <span class="kw-2">&amp;</span>PointLight;
+    <span class="kw">fn </span>get_point_light(<span class="kw-2">&amp;</span><span class="self">self</span>, light_id: u32) -&gt; PointLight;
 
     <span class="kw">fn </span>fetch_point_shadow&lt;PS: PointShadowTextures&gt;(
         <span class="kw-2">&amp;</span><span class="self">self</span>,
@@ -306,26 +303,19 @@
     }
 }
 
-<span class="attr">#[derive(Copy, Clone, PartialEq)]
-#[repr(C)]
-</span><span class="kw">pub struct </span>PointLightsUniform {
-    <span class="kw">pub </span>data: [PointLight; <span class="number">256</span>],
-}
+<span class="kw">pub type </span>PointLightsUniform&lt;<span class="lifetime">&#39;a</span>&gt; = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[PointLight; <span class="number">256</span>];
 
-<span class="kw">impl </span>PointLights <span class="kw">for </span>PointLightsUniform {
-    <span class="kw">fn </span>get_point_light(<span class="kw-2">&amp;</span><span class="self">self</span>, light_id: u32) -&gt; <span class="kw-2">&amp;</span>PointLight {
-        <span class="kw-2">&amp;</span><span class="self">self</span>.data[light_id <span class="kw">as </span>usize]
+<span class="kw">impl </span>PointLights <span class="kw">for </span>PointLightsUniform&lt;<span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">fn </span>get_point_light(<span class="kw-2">&amp;</span><span class="self">self</span>, light_id: u32) -&gt; PointLight {
+        <span class="self">self</span>[light_id <span class="kw">as </span>usize]
     }
 }
 
-<span class="attr">#[repr(C)]
-</span><span class="kw">pub struct </span>PointLightsStorage {
-    <span class="kw">pub </span>data: spirv_std::RuntimeArray&lt;PointLight&gt;,
-}
+<span class="kw">pub type </span>PointLightsStorage&lt;<span class="lifetime">&#39;a</span>&gt; = <span class="kw-2">&amp;</span><span class="lifetime">&#39;a </span>[PointLight];
 
-<span class="kw">impl </span>PointLights <span class="kw">for </span>PointLightsStorage {
-    <span class="kw">fn </span>get_point_light(<span class="kw-2">&amp;</span><span class="self">self</span>, light_id: u32) -&gt; <span class="kw-2">&amp;</span>PointLight {
-        <span class="kw">unsafe </span>{ <span class="self">self</span>.data.index(light_id <span class="kw">as </span>usize) }
+<span class="kw">impl </span>PointLights <span class="kw">for </span>PointLightsStorage&lt;<span class="lifetime">&#39;_</span>&gt; {
+    <span class="kw">fn </span>get_point_light(<span class="kw-2">&amp;</span><span class="self">self</span>, light_id: u32) -&gt; PointLight {
+        <span class="kw-2">*</span><span class="kw">unsafe </span>{ <span class="self">self</span>.index(light_id <span class="kw">as </span>usize) }
     }
 }
 </code></pre></div>

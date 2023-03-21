@@ -549,27 +549,27 @@
 
     <span class="attr">#[permutate(buffer_format = uniform)]
     #[spirv(uniform, descriptor_set = <span class="number">0</span>, binding = <span class="number">6</span>)]
-    </span>point_lights: <span class="kw-2">&amp;</span><span class="kw">crate</span>::prelude::PointLightsUniform,
+    </span>point_lights: <span class="kw">crate</span>::prelude::PointLightsUniform,
 
     <span class="attr">#[permutate(buffer_format = storage)]
     #[spirv(storage_buffer, descriptor_set = <span class="number">0</span>, binding = <span class="number">6</span>)]
-    </span>point_lights: <span class="kw-2">&amp;</span><span class="kw">crate</span>::prelude::PointLightsStorage,
+    </span>point_lights: <span class="kw">crate</span>::prelude::PointLightsStorage,
 
     <span class="attr">#[permutate(buffer_format = uniform)]
     #[spirv(uniform, descriptor_set = <span class="number">0</span>, binding = <span class="number">7</span>)]
-    </span>cluster_light_index_lists: <span class="kw-2">&amp;</span><span class="kw">crate</span>::prelude::ClusterLightIndexListsUniform,
+    </span>cluster_light_index_lists: <span class="kw">crate</span>::prelude::ClusterLightIndexListsUniform,
 
     <span class="attr">#[permutate(buffer_format = storage)]
     #[spirv(storage_buffer, descriptor_set = <span class="number">0</span>, binding = <span class="number">7</span>)]
-    </span>cluster_light_index_lists: <span class="kw-2">&amp;</span><span class="kw">crate</span>::prelude::ClusterLightIndexListsStorage,
+    </span>cluster_light_index_lists: <span class="kw">crate</span>::prelude::ClusterLightIndexListsStorage,
 
     <span class="attr">#[permutate(buffer_format = uniform)]
     #[spirv(uniform, descriptor_set = <span class="number">0</span>, binding = <span class="number">8</span>)]
-    </span>cluster_offsets_and_counts: <span class="kw-2">&amp;</span><span class="kw">crate</span>::prelude::ClusterOffsetsAndCountsUniform,
+    </span>cluster_offsets_and_counts: <span class="kw">crate</span>::prelude::ClusterOffsetsAndCountsUniform,
 
     <span class="attr">#[permutate(buffer_format = storage)]
     #[spirv(storage_buffer, descriptor_set = <span class="number">0</span>, binding = <span class="number">8</span>)]
-    </span>cluster_offsets_and_counts: <span class="kw-2">&amp;</span><span class="kw">crate</span>::prelude::ClusterOffsetsAndCountsStorage,
+    </span>cluster_offsets_and_counts: <span class="kw">crate</span>::prelude::ClusterOffsetsAndCountsStorage,
 
     <span class="attr">#[spirv(uniform, descriptor_set = <span class="number">0</span>, binding = <span class="number">10</span>)] </span>fog: <span class="kw-2">&amp;</span>Fog,
 
@@ -644,19 +644,19 @@
     </span><span class="kw">type </span>_DirectionalShadow = <span class="kw">crate</span>::prelude::DirectionalShadowTextureArray;
 
     <span class="attr">#[permutate(buffer_format = uniform)]
-    </span><span class="kw">type </span>_PointLights = <span class="kw">crate</span>::prelude::PointLightsUniform;
+    </span><span class="kw">type </span>_PointLights&lt;<span class="lifetime">&#39;a</span>&gt; = <span class="kw">crate</span>::prelude::PointLightsUniform&lt;<span class="lifetime">&#39;a</span>&gt;;
     <span class="attr">#[permutate(buffer_format = storage)]
-    </span><span class="kw">type </span>_PointLights = <span class="kw">crate</span>::prelude::PointLightsStorage;
+    </span><span class="kw">type </span>_PointLights&lt;<span class="lifetime">&#39;a</span>&gt; = <span class="kw">crate</span>::prelude::PointLightsStorage&lt;<span class="lifetime">&#39;a</span>&gt;;
 
     <span class="attr">#[permutate(buffer_format = uniform)]
-    </span><span class="kw">type </span>_ClusterLightIndexLists = <span class="kw">crate</span>::prelude::ClusterLightIndexListsUniform;
+    </span><span class="kw">type </span>_ClusterLightIndexLists&lt;<span class="lifetime">&#39;a</span>&gt; = <span class="kw">crate</span>::prelude::ClusterLightIndexListsUniform&lt;<span class="lifetime">&#39;a</span>&gt;;
     <span class="attr">#[permutate(buffer_format = storage)]
-    </span><span class="kw">type </span>_ClusterLightIndexLists = <span class="kw">crate</span>::prelude::ClusterLightIndexListsStorage;
+    </span><span class="kw">type </span>_ClusterLightIndexLists&lt;<span class="lifetime">&#39;a</span>&gt; = <span class="kw">crate</span>::prelude::ClusterLightIndexListsStorage&lt;<span class="lifetime">&#39;a</span>&gt;;
 
     <span class="attr">#[permutate(buffer_format = uniform)]
-    </span><span class="kw">type </span>_ClusterOffsetsAndCounts = <span class="kw">crate</span>::prelude::ClusterOffsetsAndCountsUniform;
+    </span><span class="kw">type </span>_ClusterOffsetsAndCounts&lt;<span class="lifetime">&#39;a</span>&gt; = <span class="kw">crate</span>::prelude::ClusterOffsetsAndCountsUniform&lt;<span class="lifetime">&#39;a</span>&gt;;
     <span class="attr">#[permutate(buffer_format = storage)]
-    </span><span class="kw">type </span>_ClusterOffsetsAndCounts = <span class="kw">crate</span>::prelude::ClusterOffsetsAndCountsStorage;
+    </span><span class="kw">type </span>_ClusterOffsetsAndCounts&lt;<span class="lifetime">&#39;a</span>&gt; = <span class="kw">crate</span>::prelude::ClusterOffsetsAndCountsStorage&lt;<span class="lifetime">&#39;a</span>&gt;;
 
     <span class="attr">#[permutate(blend_mode = multiply)]
     </span><span class="kw">type </span>_PremultiplyAlpha = <span class="kw">crate</span>::prelude::Multiply;
@@ -849,9 +849,9 @@
                 view,
                 mesh,
                 lights,
-                point_lights,
-                cluster_light_index_lists,
-                cluster_offsets_and_counts,
+                <span class="kw-2">&amp;</span>point_lights,
+                <span class="kw-2">&amp;</span>cluster_light_index_lists,
+                <span class="kw-2">&amp;</span>cluster_offsets_and_counts,
                 directional_shadow_textures,
                 directional_shadow_textures_sampler,
                 point_shadow_textures,
