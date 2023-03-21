@@ -1,14 +1,14 @@
 use rust_gpu_bridge::glam::{Vec3, Vec4};
 
-use crate::prelude::{Lights, f_ab, env_brdf_approx};
+use crate::prelude::{env_brdf_approx, f_ab, Lights};
 
 // A precomputed `NdotV` is provided because it is computed regardless,
 // but `world_normal` and the view vector `V` are provided separately for more advanced uses.
 pub fn ambient_light<const MAX_DIRECTIONAL_LIGHTS: usize, const MAX_CASCADES_PER_LIGHT: usize>(
     lights: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
-    world_position: Vec4,
-    world_normal: Vec3,
-    v: Vec3,
+    _: Vec4,
+    _: Vec3,
+    _: Vec3,
     n_dot_v: f32,
     diffuse_color: Vec3,
     specular_color: Vec3,

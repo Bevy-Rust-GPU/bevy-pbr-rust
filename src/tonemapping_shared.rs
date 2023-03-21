@@ -1,11 +1,4 @@
-use rust_gpu_bridge::{
-    exp2::Exp2,
-    glam::{Mat3, Vec4},
-    log2::Log2,
-    mix::Mix,
-    pow::Pow,
-    saturate::Saturate,
-};
+use rust_gpu_bridge::{glam::Mat3, Exp2, Log2, Mix, Pow, Saturate};
 use spirv_std::{
     glam::{Vec2, Vec3},
     Sampler,
@@ -48,7 +41,7 @@ impl SampleCurrentLut for TonemapMethodBlenderFilmic {
 }
 
 impl SampleCurrentLut for () {
-    fn sample_current_lut(dt_lut_texture: &Texture3d, dt_lut_sampler: &Sampler, p: Vec3) -> Vec3 {
+    fn sample_current_lut(_: &Texture3d, _: &Sampler, _: Vec3) -> Vec3 {
         Vec3::new(1.0, 0.0, 1.0)
     }
 }

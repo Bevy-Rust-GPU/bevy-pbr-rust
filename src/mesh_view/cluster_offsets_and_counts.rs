@@ -36,6 +36,6 @@ pub type ClusterOffsetsAndCountsStorage<'a> = &'a [UVec4];
 
 impl ClusterOffsetsAndCounts for ClusterOffsetsAndCountsStorage<'_> {
     fn unpack(&self, cluster_index: u32) -> UVec3 {
-        unsafe { self.index(cluster_index as usize) }.truncate()
+        self.index(cluster_index as usize).truncate()
     }
 }

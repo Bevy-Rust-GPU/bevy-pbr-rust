@@ -1,6 +1,6 @@
 use rust_gpu_bridge::{
-    glam::{Vec2, Vec3, Vec4},
-    pow::Pow,
+    glam::{Vec2, Vec3},
+    Pow,
 };
 use spirv_std::Sampler;
 
@@ -31,18 +31,18 @@ impl EnvironmentMap for () {
         const MAX_DIRECTIONAL_LIGHTS: usize,
         const MAX_CASCADES_PER_LIGHT: usize,
     >(
-        lights: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
-        environment_map_diffuse: &TextureCube,
-        environment_map_specular: &TextureCube,
-        environment_map_sampler: &Sampler,
-        perceptual_roughness: f32,
-        roughness: f32,
-        diffuse_color: Vec3,
-        n_dot_v: f32,
-        f_ab: Vec2,
-        n: Vec3,
-        r: Vec3,
-        f0: Vec3,
+        _: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
+        _: &TextureCube,
+        _: &TextureCube,
+        _: &Sampler,
+        _: f32,
+        _: f32,
+        _: Vec3,
+        _: f32,
+        _: Vec2,
+        _: Vec3,
+        _: Vec3,
+        _: Vec3,
     ) -> EnvironmentMapLight {
         Default::default()
     }

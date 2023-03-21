@@ -155,6 +155,6 @@ pub type PointLightsStorage<'a> = &'a [PointLight];
 
 impl PointLights for PointLightsStorage<'_> {
     fn get_point_light(&self, light_id: u32) -> PointLight {
-        *unsafe { self.index(light_id as usize) }
+        *self.index(light_id as usize)
     }
 }

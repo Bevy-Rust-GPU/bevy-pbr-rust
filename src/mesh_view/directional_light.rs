@@ -1,6 +1,6 @@
 use spirv_std::glam::{Mat4, Vec3, Vec4};
 
-use rust_gpu_bridge::{glam::Vec2, saturate::Saturate};
+use rust_gpu_bridge::{glam::Vec2, Saturate};
 
 use crate::prelude::{fd_burley, specular};
 
@@ -48,12 +48,12 @@ impl<const MAX_CASCADES_PER_LIGHT: usize> Default for DirectionalLight<MAX_CASCA
 impl<const MAX_CASCADES_PER_LIGHT: usize> DirectionalLight<MAX_CASCADES_PER_LIGHT> {
     pub fn directional_light(
         &self,
-        light_id: u32,
+        _: u32,
         roughness: f32,
         n_dot_v: f32,
         normal: Vec3,
         view: Vec3,
-        r: Vec3,
+        _: Vec3,
         f0: Vec3,
         f_ab: Vec2,
         diffuse_color: Vec3,

@@ -29,6 +29,6 @@ pub type ClusterLightIndexListsStorage<'a> = &'a [u32];
 
 impl ClusterLightIndexLists for ClusterLightIndexListsStorage<'_> {
     fn get_light_id(&self, index: u32) -> u32 {
-        *unsafe { self.index(index as usize) }
+        *self.index(index as usize)
     }
 }

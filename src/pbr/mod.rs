@@ -11,7 +11,7 @@ use spirv_std::{
     Sampler,
 };
 
-use rust_gpu_bridge::{glam::Vec2, hsv2rgb, pow::Pow, prelude::Reflect};
+use rust_gpu_bridge::{glam::Vec2, hsv2rgb, Pow, Reflect};
 
 use crate::{
     environment_map::EnvironmentMapLight,
@@ -104,18 +104,18 @@ impl EnvironmentMap for () {
         const MAX_DIRECTIONAL_LIGHTS: usize,
         const MAX_CASCADES_PER_LIGHT: usize,
     >(
-        lights: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
-        environment_map_diffuse: &TextureCube,
-        environment_map_specular: &TextureCube,
-        environment_map_sampler: &Sampler,
-        perceptual_roughness: f32,
-        roughness: f32,
-        diffuse_color: Vec3,
-        n_dot_v: f32,
-        f_ab: Vec2,
-        n: Vec3,
-        r: Vec3,
-        f0: Vec3,
+        _: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
+        _: &TextureCube,
+        _: &TextureCube,
+        _: &Sampler,
+        _: f32,
+        _: f32,
+        _: Vec3,
+        _: f32,
+        _: Vec2,
+        _: Vec3,
+        _: Vec3,
+        _: Vec3,
     ) -> EnvironmentMapLight {
         Default::default()
     }
@@ -136,7 +136,7 @@ impl PbrInput {
     >(
         &self,
         view: &View,
-        mesh: &Mesh,
+        _: &Mesh,
         lights: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
         point_lights: &PL,
         cluster_light_index_lists: &CL,
@@ -376,10 +376,10 @@ impl DirectionalLightShadowMapDebug for () {
         const MAX_DIRECTIONAL_LIGHTS: usize,
         const MAX_CASCADES_PER_LIGHT: usize,
     >(
-        lights: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
+        _: &Lights<MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT>,
         output_color: Vec3,
-        light_id: u32,
-        view_z: f32,
+        _: u32,
+        _: f32,
     ) -> Vec3 {
         output_color
     }
@@ -460,7 +460,7 @@ pub trait PremultiplyAlpha {
 }
 
 impl PremultiplyAlpha for () {
-    fn premultiply_alpha(standard_material_flags: u32, color: Vec4) -> Vec4 {
+    fn premultiply_alpha(_: u32, color: Vec4) -> Vec4 {
         color
     }
 }
@@ -468,7 +468,7 @@ impl PremultiplyAlpha for () {
 pub enum Multiply {}
 
 impl PremultiplyAlpha for Multiply {
-    fn premultiply_alpha(standard_material_flags: u32, color: Vec4) -> Vec4 {
+    fn premultiply_alpha(_: u32, color: Vec4) -> Vec4 {
         // `Multiply` uses its own `BlendState`, but we still need to premultiply here in the
         // shader so that we get correct results as we tweak the alpha channel
 

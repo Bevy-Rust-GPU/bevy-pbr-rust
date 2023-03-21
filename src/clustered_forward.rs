@@ -1,7 +1,7 @@
 use core::ops::Add;
 
 use crate::glam::{UVec3, Vec4};
-use rust_gpu_bridge::{hsv2rgb, random_1d, smooth_step::SmoothStep};
+use rust_gpu_bridge::{hsv2rgb, random_1d, SmoothStep};
 
 #[allow(unused_imports)]
 use spirv_std::num_traits::Float;

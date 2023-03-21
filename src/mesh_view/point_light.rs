@@ -3,7 +3,7 @@ use spirv_std::glam::{Vec3, Vec4};
 #[allow(unused_imports)]
 use spirv_std::num_traits::Float;
 
-use rust_gpu_bridge::{glam::Vec2, saturate::Saturate};
+use rust_gpu_bridge::{glam::Vec2, Saturate};
 
 use super::super::prelude::{fd_burley, get_distance_attenuation, specular};
 
@@ -29,7 +29,7 @@ impl PointLight {
     pub fn point_light(
         &self,
         world_position: Vec3,
-        light_id: u32,
+        _: u32,
         roughness: f32,
         n_dot_v: f32,
         n: Vec3,
