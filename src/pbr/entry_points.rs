@@ -100,27 +100,27 @@ pub fn fragment(
 
     #[permutate(buffer_format = uniform)]
     #[spirv(uniform, descriptor_set = 0, binding = 6)]
-    point_lights: &crate::prelude::PointLightsUniform,
+    point_lights: crate::prelude::PointLightsUniform,
 
     #[permutate(buffer_format = storage)]
     #[spirv(storage_buffer, descriptor_set = 0, binding = 6)]
-    point_lights: &crate::prelude::PointLightsStorage,
+    point_lights: crate::prelude::PointLightsStorage,
 
     #[permutate(buffer_format = uniform)]
     #[spirv(uniform, descriptor_set = 0, binding = 7)]
-    cluster_light_index_lists: &crate::prelude::ClusterLightIndexListsUniform,
+    cluster_light_index_lists: crate::prelude::ClusterLightIndexListsUniform,
 
     #[permutate(buffer_format = storage)]
     #[spirv(storage_buffer, descriptor_set = 0, binding = 7)]
-    cluster_light_index_lists: &crate::prelude::ClusterLightIndexListsStorage,
+    cluster_light_index_lists: crate::prelude::ClusterLightIndexListsStorage,
 
     #[permutate(buffer_format = uniform)]
     #[spirv(uniform, descriptor_set = 0, binding = 8)]
-    cluster_offsets_and_counts: &crate::prelude::ClusterOffsetsAndCountsUniform,
+    cluster_offsets_and_counts: crate::prelude::ClusterOffsetsAndCountsUniform,
 
     #[permutate(buffer_format = storage)]
     #[spirv(storage_buffer, descriptor_set = 0, binding = 8)]
-    cluster_offsets_and_counts: &crate::prelude::ClusterOffsetsAndCountsStorage,
+    cluster_offsets_and_counts: crate::prelude::ClusterOffsetsAndCountsStorage,
 
     #[spirv(uniform, descriptor_set = 0, binding = 10)] fog: &Fog,
 
@@ -195,19 +195,19 @@ pub fn fragment(
     type _DirectionalShadow = crate::prelude::DirectionalShadowTextureArray;
 
     #[permutate(buffer_format = uniform)]
-    type _PointLights = crate::prelude::PointLightsUniform;
+    type _PointLights<'a> = crate::prelude::PointLightsUniform<'a>;
     #[permutate(buffer_format = storage)]
-    type _PointLights = crate::prelude::PointLightsStorage;
+    type _PointLights<'a> = crate::prelude::PointLightsStorage<'a>;
 
     #[permutate(buffer_format = uniform)]
-    type _ClusterLightIndexLists = crate::prelude::ClusterLightIndexListsUniform;
+    type _ClusterLightIndexLists<'a> = crate::prelude::ClusterLightIndexListsUniform<'a>;
     #[permutate(buffer_format = storage)]
-    type _ClusterLightIndexLists = crate::prelude::ClusterLightIndexListsStorage;
+    type _ClusterLightIndexLists<'a> = crate::prelude::ClusterLightIndexListsStorage<'a>;
 
     #[permutate(buffer_format = uniform)]
-    type _ClusterOffsetsAndCounts = crate::prelude::ClusterOffsetsAndCountsUniform;
+    type _ClusterOffsetsAndCounts<'a> = crate::prelude::ClusterOffsetsAndCountsUniform<'a>;
     #[permutate(buffer_format = storage)]
-    type _ClusterOffsetsAndCounts = crate::prelude::ClusterOffsetsAndCountsStorage;
+    type _ClusterOffsetsAndCounts<'a> = crate::prelude::ClusterOffsetsAndCountsStorage<'a>;
 
     #[permutate(blend_mode = multiply)]
     type _PremultiplyAlpha = crate::prelude::Multiply;
@@ -400,9 +400,9 @@ pub fn fragment(
                 view,
                 mesh,
                 lights,
-                point_lights,
-                cluster_light_index_lists,
-                cluster_offsets_and_counts,
+                &point_lights,
+                &cluster_light_index_lists,
+                &cluster_offsets_and_counts,
                 directional_shadow_textures,
                 directional_shadow_textures_sampler,
                 point_shadow_textures,

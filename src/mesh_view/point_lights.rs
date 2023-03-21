@@ -1,3 +1,5 @@
+use core::ops::Index;
+
 use spirv_std::{
     glam::{Mat3, Vec2, Vec3, Vec4},
     Sampler,
@@ -12,7 +14,7 @@ use crate::prelude::{
 use spirv_std::num_traits::Float;
 
 pub trait PointLights {
-    fn get_point_light(&self, light_id: u32) -> &PointLight;
+    fn get_point_light(&self, light_id: u32) -> PointLight;
 
     fn fetch_point_shadow<PS: PointShadowTextures>(
         &self,
@@ -141,25 +143,18 @@ pub trait PointLights {
     }
 }
 
-#[derive(Copy, Clone, PartialEq)]
-#[repr(C)]
-pub struct PointLightsUniform {
-    pub data: [PointLight; 256],
-}
+pub type PointLightsUniform<'a> = &'a [PointLight; 256];
 
-impl PointLights for PointLightsUniform {
-    fn get_point_light(&self, light_id: u32) -> &PointLight {
-        &self.data[light_id as usize]
+impl PointLights for PointLightsUniform<'_> {
+    fn get_point_light(&self, light_id: u32) -> PointLight {
+        self[light_id as usize]
     }
 }
 
-#[repr(C)]
-pub struct PointLightsStorage {
-    pub data: spirv_std::RuntimeArray<PointLight>,
-}
+pub type PointLightsStorage<'a> = &'a [PointLight];
 
-impl PointLights for PointLightsStorage {
-    fn get_point_light(&self, light_id: u32) -> &PointLight {
-        unsafe { self.data.index(light_id as usize) }
+impl PointLights for PointLightsStorage<'_> {
+    fn get_point_light(&self, light_id: u32) -> PointLight {
+        *unsafe { self.index(light_id as usize) }
     }
 }

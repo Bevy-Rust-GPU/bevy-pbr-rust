@@ -1,4 +1,4 @@
-use core::ops::Mul;
+use core::ops::{Index, Mul};
 
 use spirv_std::glam::UVec4;
 
@@ -6,18 +6,13 @@ pub trait ClusterLightIndexLists {
     fn get_light_id(&self, index: u32) -> u32;
 }
 
-#[derive(Copy, Clone, PartialEq)]
-#[repr(C)]
-pub struct ClusterLightIndexListsUniform {
-    // each u32 contains 4 u8 indices into the PointLights array
-    pub data: [UVec4; 1024],
-}
+pub type ClusterLightIndexListsUniform<'a> = &'a [UVec4; 1024];
 
-impl ClusterLightIndexLists for ClusterLightIndexListsUniform {
+impl ClusterLightIndexLists for ClusterLightIndexListsUniform<'_> {
     fn get_light_id(&self, index: u32) -> u32 {
         // The index is correct but in cluster_light_index_lists we pack 4 u8s into a u32
         // This means the index into cluster_light_index_lists is index / 4
-        let v = self.data[(index >> 4) as usize];
+        let v = self[(index >> 4) as usize];
         let indices = match ((index >> 2) & ((1 << 2) - 1)) as usize {
             0 => v.x,
             1 => v.y,
@@ -30,14 +25,10 @@ impl ClusterLightIndexLists for ClusterLightIndexListsUniform {
     }
 }
 
-#[repr(C)]
-pub struct ClusterLightIndexListsStorage {
-    pub data: spirv_std::RuntimeArray<u32>,
-}
+pub type ClusterLightIndexListsStorage<'a> = &'a [u32];
 
-impl ClusterLightIndexLists for ClusterLightIndexListsStorage {
+impl ClusterLightIndexLists for ClusterLightIndexListsStorage<'_> {
     fn get_light_id(&self, index: u32) -> u32 {
-        unsafe { *self.data.index(index as usize) }
+        *unsafe { self.index(index as usize) }
     }
 }
-
