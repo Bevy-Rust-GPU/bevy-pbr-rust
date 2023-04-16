@@ -10,7 +10,7 @@ pub struct Globals {
     pub frame_count: u32,
 }
 
-#[repr(C)]
+#[repr(C, align(16))]
 pub struct GlobalsWasm {
     // The time since startup in seconds
     // Wraps to 0 after 1 hour.

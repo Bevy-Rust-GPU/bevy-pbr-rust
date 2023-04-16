@@ -112,7 +112,7 @@ impl<const MAX_DIRECTIONAL_LIGHTS: usize, const MAX_CASCADES_PER_LIGHT: usize>
             directional_shadow_textures_sampler,
             light_local,
             depth,
-            light.depth_texture_base_index.add(cascade_index),
+            light.depth_texture_base_index + cascade_index,
             0,
         )
     }
@@ -143,7 +143,7 @@ impl<const MAX_DIRECTIONAL_LIGHTS: usize, const MAX_CASCADES_PER_LIGHT: usize>
         );
 
         // Blend with the next cascade, if there is one.
-        let next_cascade_index = cascade_index.add(1);
+        let next_cascade_index = cascade_index + 1;
         if next_cascade_index < (*light).num_cascades {
             let this_far_bound = (*light).cascades[cascade_index as usize].far_bound;
             let next_near_bound = (1.0 - (*light).cascades_overlap_proportion) * this_far_bound;
@@ -165,7 +165,12 @@ impl<const MAX_DIRECTIONAL_LIGHTS: usize, const MAX_CASCADES_PER_LIGHT: usize>
         return shadow;
     }
 
-    pub fn cascade_debug_visualization(&self, output_color: Vec3, light_id: u32, view_z: f32) -> Vec3 {
+    pub fn cascade_debug_visualization(
+        &self,
+        output_color: Vec3,
+        light_id: u32,
+        view_z: f32,
+    ) -> Vec3 {
         let overlay_alpha = 0.95;
         let cascade_index = self.get_cascade_index(light_id, view_z);
         let cascade_color = hsv2rgb(
@@ -206,9 +211,7 @@ impl<const MAX_DIRECTIONAL_LIGHTS: usize, const MAX_CASCADES_PER_LIGHT: usize>
         // NOTE: Restricting cluster index to avoid undefined behavior when accessing uniform buffer
         // arrays based on the cluster index.
         unsigned_min(
-            (xy.y.mul(self.cluster_dimensions.x).add(xy.x))
-                .mul(self.cluster_dimensions.z)
-                .add(z_slice),
+            (xy.y.mul(self.cluster_dimensions.x) + xy.x).mul(self.cluster_dimensions.z) + z_slice,
             self.cluster_dimensions.w.sub(1),
         )
     }

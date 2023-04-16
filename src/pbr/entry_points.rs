@@ -44,6 +44,7 @@ use super::BaseMaterial;
         MAX_DIRECTIONAL_LIGHTS: u32,
         MAX_CASCADES_PER_LIGHT: u32
     },
+    types = {},
     permutations = [
         // All on
         {
@@ -53,7 +54,8 @@ use super::BaseMaterial;
             constants = {
                 MAX_DIRECTIONAL_LIGHTS = 10,
                 MAX_CASCADES_PER_LIGHT = 4
-            }
+            },
+            types = {}
         },
         // All off
         {
@@ -63,7 +65,8 @@ use super::BaseMaterial;
             constants = {
                 MAX_DIRECTIONAL_LIGHTS = 10,
                 MAX_CASCADES_PER_LIGHT = 4
-            }
+            },
+            types = {}
         },
         file("../../entry_points.json", "pbr::entry_points"),
         env("BEVY_PBR_RUST_PBR_FRAGMENT_PERMUTATIONS", "pbr::entry_points")

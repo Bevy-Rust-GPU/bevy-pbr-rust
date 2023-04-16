@@ -197,7 +197,7 @@ impl PbrInput {
         let offset_and_counts = cluster_offsets_and_counts.unpack(cluster_index);
 
         // Point lights (direct)
-        for i in offset_and_counts.x as u32..(offset_and_counts.x.add(offset_and_counts.y)) as u32 {
+        for i in offset_and_counts.x as u32..(offset_and_counts.x + offset_and_counts.y) as u32 {
             let light_id = cluster_light_index_lists.get_light_id(i);
 
             let mut shadow: f32 = 1.0;
@@ -231,11 +231,8 @@ impl PbrInput {
         }
 
         // Spot lights (direct)
-        for i in (offset_and_counts.x.add(offset_and_counts.y)) as u32
-            ..(offset_and_counts
-                .x
-                .add(offset_and_counts.y)
-                .add(offset_and_counts.z)) as u32
+        for i in (offset_and_counts.x + offset_and_counts.y) as u32
+            ..(offset_and_counts.x + offset_and_counts.y + offset_and_counts.z) as u32
         {
             let light_id = cluster_light_index_lists.get_light_id(i);
             let light = point_lights.get_point_light(light_id);
@@ -400,7 +397,7 @@ impl DirectionalLightShadowMapDebug for DebugCascades {
         let overlay_alpha = 0.95;
         let cascade_index = lights.get_cascade_index(light_id, view_z);
         let cascade_color = hsv2rgb(
-            cascade_index as f32 / (MAX_CASCADES_PER_LIGHT.add(1)) as f32,
+            cascade_index as f32 / (MAX_CASCADES_PER_LIGHT + 1) as f32,
             1.0,
             0.5,
         );

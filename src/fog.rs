@@ -13,7 +13,7 @@ pub const FOG_MODE_EXPONENTIAL: u32 = 2;
 pub const FOG_MODE_EXPONENTIAL_SQUARED: u32 = 3;
 pub const FOG_MODE_ATMOSPHERIC: u32 = 4;
 
-#[repr(C, packed(4))]
+#[repr(C)]
 pub struct Fog {
     pub base_color: Vec4,
     pub directional_light_color: Vec4,

@@ -21,6 +21,7 @@ use super::mesh_position_local_to_world;
         skinned: some | none
     },
     constants = {},
+    types = {},
     permutations = [
         {
             parameters = [
@@ -28,7 +29,8 @@ use super::mesh_position_local_to_world;
                 none,
                 none
             ],
-            constants = {}
+            constants = {},
+            types = {}
         },
         {
             parameters = [
@@ -36,8 +38,8 @@ use super::mesh_position_local_to_world;
                 some,
                 some
             ],
-            constants = {
-            }
+            constants = {},
+            types = {}
         },
         file("../../entry_points.json", "mesh::entry_points"),
         env("BEVY_PBR_RUST_MESH_VERTEX_PERMUTATIONS", "mesh::entry_points")
@@ -108,11 +110,6 @@ pub fn vertex(
 
 #[spirv(fragment)]
 #[allow(unused_variables)]
-pub fn fragment(
-    in_world_position: Vec4,
-    in_world_normal: Vec3,
-    in_uv: Vec2,
-    out_color: &mut Vec4,
-) {
+pub fn fragment(in_world_position: Vec4, in_world_normal: Vec3, in_uv: Vec2, out_color: &mut Vec4) {
     *out_color = Vec4::new(1.0, 0.0, 1.0, 1.0);
 }
