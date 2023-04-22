@@ -14,7 +14,6 @@ rust-gpu-bridge = { path = "../rust-gpu-bridge" }
 permutate-macro = { path = "../permutate-macro" }
 
 [dependencies]
-bitflags = "2.0.1"
-spirv-std = "0.6.0"
+spirv-std = "0.7.0"
 permutate-macro = "0.4.0"
 rust-gpu-bridge = { version = "0.4.0", features = ["spirv-std"] }
