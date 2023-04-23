@@ -1,13 +1,13 @@
 [package]
 name = "bevy-pbr-rust"
-version = "0.3.0"
+version = "0.4.0"
 edition = "2021"
 
 [lib]
 crate_type = ["dylib", "rlib"]
 
 [dependencies]
-rust-gpu-bridge = { git = "https://github.com/bevy-rust-gpu/rust-gpu-bridge", tag = "v0.4.0", features = ["spirv-std"] }
-permutate-macro = { git = "https://github.com/bevy-rust-gpu/permutate-macro", tag = "v0.4.0" }
+rust-gpu-bridge = { git = "https://github.com/bevy-rust-gpu/rust-gpu-bridge", tag = "v0.5.0", features = ["spirv-std"] }
+permutate-macro = { git = "https://github.com/bevy-rust-gpu/permutate-macro", tag = "v0.5.0" }
 
 spirv-std = "0.7.0"
