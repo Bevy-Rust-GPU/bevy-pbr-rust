@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"constant":[["MESH_FLAGS_SHADOW_RECEIVER_BIT",""],["MESH_FLAGS_SIGN_DETERMINANT_MODEL_3X3_BIT",""]],"fn":[["mesh_position_local_to_world",""]],"mod":[["bindings",""],["entry_points",""],["skinned_mesh",""]],"struct":[["Mesh",""]]};
+window.SIDEBAR_ITEMS = {"constant":["MESH_FLAGS_SHADOW_RECEIVER_BIT","MESH_FLAGS_SIGN_DETERMINANT_MODEL_3X3_BIT"],"fn":["mesh_position_local_to_world"],"mod":["bindings","entry_points","skinned_mesh"],"struct":["Mesh"]};

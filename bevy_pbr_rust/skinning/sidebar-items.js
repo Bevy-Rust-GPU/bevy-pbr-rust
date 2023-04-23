@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["inverse_transpose_3x3",""],["skin_normals",""]]};
+window.SIDEBAR_ITEMS = {"fn":["inverse_transpose_3x3","skin_normals"]};

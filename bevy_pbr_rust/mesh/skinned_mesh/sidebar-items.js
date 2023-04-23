@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["SkinnedMesh",""]]};
+window.SIDEBAR_ITEMS = {"struct":["SkinnedMesh"]};

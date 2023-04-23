@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"struct":[["EnvironmentMapLight",""]],"trait":[["EnvironmentMap",""]]};
+window.SIDEBAR_ITEMS = {"struct":["EnvironmentMapLight"],"trait":["EnvironmentMap"]};

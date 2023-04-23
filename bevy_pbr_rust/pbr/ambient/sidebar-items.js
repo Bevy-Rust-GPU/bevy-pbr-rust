@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["ambient_light",""]]};
+window.SIDEBAR_ITEMS = {"fn":["ambient_light"]};

@@ -1,1 +1,1 @@
-window.SIDEBAR_ITEMS = {"fn":[["pbr_bindings",""]],"type":[["BaseColorTexture",""],["EmissiveTexture",""],["MetallicRoughnessTexture",""],["NormalMapTexture",""],["OcclusionTexture",""]]};
+window.SIDEBAR_ITEMS = {"fn":["pbr_bindings"],"type":["BaseColorTexture","EmissiveTexture","MetallicRoughnessTexture","NormalMapTexture","OcclusionTexture"]};
