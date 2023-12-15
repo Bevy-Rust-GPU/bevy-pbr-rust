@@ -7,12 +7,12 @@
         environment_map_sampler: &amp;Sampler,
         perceptual_roughness: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.f32.html">f32</a>,
         roughness: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.f32.html">f32</a>,
-        diffuse_color: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
+        diffuse_color: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
         n_dot_v: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.f32.html">f32</a>,
         f_ab: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec2/struct.Vec2.html" title="struct glam::f32::vec2::Vec2">Vec2</a>,
-        n: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
-        r: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
-        f0: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>
+        n: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
+        r: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
+        f0: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>
     ) -&gt; <a class="struct" href="../environment_map/struct.EnvironmentMapLight.html" title="struct bevy_pbr_rust::environment_map::EnvironmentMapLight">EnvironmentMapLight</a>;
 }</code></pre><h2 id="required-methods" class="small-section-header">Required Methods<a href="#required-methods" class="anchor">§</a></h2><div class="methods"><section id="tymethod.environment_map_light" class="method"><a class="srclink rightside" href="../../src/bevy_pbr_rust/pbr/mod.rs.html#83-99">source</a><h4 class="code-header">fn <a href="#tymethod.environment_map_light" class="fn">environment_map_light</a>&lt;const MAX_DIRECTIONAL_LIGHTS: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.usize.html">usize</a>, const MAX_CASCADES_PER_LIGHT: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.usize.html">usize</a>&gt;(
     lights: &amp;<a class="struct" href="../mesh_view/lights/struct.Lights.html" title="struct bevy_pbr_rust::mesh_view::lights::Lights">Lights</a>&lt;MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT&gt;,
@@ -21,12 +21,12 @@
     environment_map_sampler: &amp;Sampler,
     perceptual_roughness: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.f32.html">f32</a>,
     roughness: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.f32.html">f32</a>,
-    diffuse_color: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
+    diffuse_color: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
     n_dot_v: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.f32.html">f32</a>,
     f_ab: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec2/struct.Vec2.html" title="struct glam::f32::vec2::Vec2">Vec2</a>,
-    n: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
-    r: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
-    f0: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>
+    n: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
+    r: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
+    f0: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>
 ) -&gt; <a class="struct" href="../environment_map/struct.EnvironmentMapLight.html" title="struct bevy_pbr_rust::environment_map::EnvironmentMapLight">EnvironmentMapLight</a></h4></section></div><h2 id="foreign-impls" class="small-section-header">Implementations on Foreign Types<a href="#foreign-impls" class="anchor">§</a></h2><details class="toggle implementors-toggle"><summary><section id="impl-EnvironmentMap-for-()" class="impl"><a class="srclink rightside" href="../../src/bevy_pbr_rust/pbr/mod.rs.html#102-122">source</a><a href="#impl-EnvironmentMap-for-()" class="anchor">§</a><h3 class="code-header">impl <a class="trait" href="trait.EnvironmentMap.html" title="trait bevy_pbr_rust::pbr::EnvironmentMap">EnvironmentMap</a> for <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.unit.html">()</a></h3></section></summary><div class="impl-items"><section id="method.environment_map_light" class="method trait-impl"><a class="srclink rightside" href="../../src/bevy_pbr_rust/pbr/mod.rs.html#103-121">source</a><a href="#method.environment_map_light" class="anchor">§</a><h4 class="code-header">fn <a href="#tymethod.environment_map_light" class="fn">environment_map_light</a>&lt;const MAX_DIRECTIONAL_LIGHTS: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.usize.html">usize</a>, const MAX_CASCADES_PER_LIGHT: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.usize.html">usize</a>&gt;(
     _: &amp;<a class="struct" href="../mesh_view/lights/struct.Lights.html" title="struct bevy_pbr_rust::mesh_view::lights::Lights">Lights</a>&lt;MAX_DIRECTIONAL_LIGHTS, MAX_CASCADES_PER_LIGHT&gt;,
     _: &amp;<a class="type" href="../mesh_view/bindings/type.TextureCube.html" title="type bevy_pbr_rust::mesh_view::bindings::TextureCube">TextureCube</a>,
@@ -34,10 +34,10 @@
     _: &amp;Sampler,
     _: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.f32.html">f32</a>,
     _: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.f32.html">f32</a>,
-    _: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
+    _: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
     _: <a class="primitive" href="https://doc.rust-lang.org/nightly/core/primitive.f32.html">f32</a>,
     _: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec2/struct.Vec2.html" title="struct glam::f32::vec2::Vec2">Vec2</a>,
-    _: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
-    _: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
-    _: <a class="struct" href="https://docs.rs/glam/0.22.0/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>
+    _: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
+    _: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>,
+    _: <a class="struct" href="https://docs.rs/glam/0.24.2/glam/f32/vec3/struct.Vec3.html" title="struct glam::f32::vec3::Vec3">Vec3</a>
 ) -&gt; <a class="struct" href="../environment_map/struct.EnvironmentMapLight.html" title="struct bevy_pbr_rust::environment_map::EnvironmentMapLight">EnvironmentMapLight</a></h4></section></div></details><h2 id="implementors" class="small-section-header">Implementors<a href="#implementors" class="anchor">§</a></h2><div id="implementors-list"></div><script src="../../implementors/bevy_pbr_rust/pbr/trait.EnvironmentMap.js" data-ignore-extern-crates="core" async></script></section></div></main><div id="rustdoc-vars" data-root-path="../../" data-static-root-path="../../static.files/" data-current-crate="bevy_pbr_rust" data-themes="" data-resource-suffix="" data-rustdoc-version="1.69.0-nightly (44cfafe2f 2023-03-03)" data-search-js="search-894761433ba8c506.js" data-settings-js="settings-f0c5c39777a9a2f6.js" data-settings-css="settings-0bcba95ff279c1db.css" ></div></body></html>
